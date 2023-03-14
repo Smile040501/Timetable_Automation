@@ -6,6 +6,7 @@ const execute = () => {
     const verbose = false;
     const data = new Data();
     const logger = new Logger(data);
+    const geneticAlgo = new GeneticAlgorithm(data);
 
     if (verbose) {
         console.log(data);
@@ -23,25 +24,19 @@ const execute = () => {
             "======================================= SLOTS ======================================="
         );
         console.log(slots);
-    }
-
-    const geneticAlgo = new GeneticAlgorithm(data);
-    if (!verbose) {
+    } else {
         geneticAlgo.execute();
     }
 
-    if (verbose) {
-        // console.log(logger.logGeneration(geneticAlgo.population));
-        const bestSchedule = geneticAlgo.population.schedules[0];
-        console.log(logger.logScheduleWRTClasses(bestSchedule));
-        console.log(logger.logScheduleWRTSlots(bestSchedule));
-        console.log(logger.logScheduleWRTRooms(bestSchedule));
-        console.log(logger.logScheduleWRTFaculties(bestSchedule));
-        console.log(logger.logConflicts(bestSchedule));
-        console.log(
-            logger.logWeekWiseSchedule(bestSchedule.getWeekdayWiseSchedule())
-        );
-    }
+    const bestSchedule = geneticAlgo.population.schedules[0];
+    console.log(logger.logScheduleWRTClasses(bestSchedule));
+    console.log(logger.logScheduleWRTSlots(bestSchedule));
+    console.log(logger.logScheduleWRTRooms(bestSchedule));
+    console.log(logger.logScheduleWRTFaculties(bestSchedule));
+    console.log(logger.logConflicts(bestSchedule));
+    console.log(
+        logger.logWeekWiseSchedule(bestSchedule.getWeekdayWiseSchedule())
+    );
 };
 
 export default execute;

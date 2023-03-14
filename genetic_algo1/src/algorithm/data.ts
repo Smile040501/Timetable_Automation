@@ -19,43 +19,43 @@ const departmentDist: {
     };
 } = expandObject({
     [`${Departments.CSE}, ${Departments.EE}`]: {
-        numFaculty: 15,
+        numFaculty: 2,
         courses: {
             [CourseType.PMT]: {
-                num: 3,
+                num: 2,
                 credits: [3, 4, 5],
             },
             [CourseType.PMP]: {
                 num: 2,
-                credits: [3, 4],
+                credits: [3],
             },
             [CourseType.PME]: {
-                num: 15,
+                num: 1,
                 credits: [3, 4, 5],
             },
             [CourseType.OE]: {
-                num: 3,
+                num: 0,
                 credits: [3, 4, 5],
             },
         },
     },
     [`${Departments.ME}, ${Departments.CE}`]: {
-        numFaculty: 15,
+        numFaculty: 2,
         courses: {
             [CourseType.PMT]: {
-                num: 3,
+                num: 2,
                 credits: [3, 4, 5],
             },
             [CourseType.PMP]: {
-                num: 3,
-                credits: [3, 4],
+                num: 2,
+                credits: [3],
             },
             [CourseType.PME]: {
-                num: 15,
+                num: 1,
                 credits: [3, 4, 5],
             },
             [CourseType.OE]: {
-                num: 3,
+                num: 0,
                 credits: [3, 4, 5],
             },
         },

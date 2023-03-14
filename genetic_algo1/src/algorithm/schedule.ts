@@ -10,6 +10,7 @@ import Slot from "./models/slot";
 import Room from "./models/room";
 import Faculty from "./models/faculty";
 import { getEnumKeys } from "./utils/utils";
+import Course from "./models/course";
 
 // A Single Chromosome
 export default class Schedule {
@@ -44,24 +45,7 @@ export default class Schedule {
             }
 
             // Allocate slots which satisfy the credit requirements first
-            const eligibleSlots = this.data.slots.filter(
-                (slot) => slot.credits >= course.totalCredits
-            );
-            if (eligibleSlots.length !== 0) {
-                newClass.slots.push(
-                    eligibleSlots[random(0, eligibleSlots.length - 1)]
-                );
-            } else {
-                let slotCredits = 0;
-                while (slotCredits < course.totalCredits) {
-                    const slot =
-                        this.data.slots[random(0, this.data.slots.length - 1)];
-                    if (newClass.slots.indexOf(slot) === -1) {
-                        newClass.slots.push(slot);
-                        slotCredits += slot.credits;
-                    }
-                }
-            }
+            this.allocateSlot(course, course.totalCredits, newClass.slots);
 
             // Only give those rooms to classes with enough capacity and satisfied feature
             // For lab course, only a lab room
@@ -79,6 +63,31 @@ export default class Schedule {
         });
 
         return this;
+    };
+
+    allocateSlot = (
+        course: Course,
+        remainingCredits: number,
+        allottedSlots: Slot[]
+    ) => {
+        if (remainingCredits === 0) {
+            return;
+        }
+        let credits = 0;
+        let eligibleSlots: Slot[] = [];
+        while (eligibleSlots.length === 0) {
+            credits = random(1, remainingCredits);
+            for (const slot of this.data.slots) {
+                if (
+                    slot.credits === credits &&
+                    slot.lectureType === course.lectureType
+                ) {
+                    eligibleSlots.push(slot);
+                }
+            }
+        }
+        allottedSlots.push(eligibleSlots[random(0, eligibleSlots.length - 1)]);
+        this.allocateSlot(course, remainingCredits - credits, allottedSlots);
     };
 
     calculateFitness = () => {

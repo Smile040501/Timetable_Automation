@@ -240,7 +240,6 @@ export default class Logger {
     logWeekWiseSchedule = (
         p: [Map<number, [Class, Interval, Slot][]>[], Interval[]]
     ) => {
-        console.log(p);
         const [schedule, intervalsSet] = p;
         const header = ["WeekDay"];
         intervalsSet.forEach((interval) => {
