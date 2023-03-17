@@ -30,7 +30,7 @@ export default class Interval {
             Interval.options
         ).format(endDate);
 
-        return `${startDateStr} - ${endDateStr}`;
+        return `${startDateStr} -\n${endDateStr}`;
     };
 
     static getMinutes = (i: Interval): [number, number] => {

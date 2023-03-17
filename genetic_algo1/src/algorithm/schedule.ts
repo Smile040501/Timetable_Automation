@@ -70,17 +70,18 @@ export default class Schedule {
         remainingCredits: number,
         allottedSlots: Slot[]
     ) => {
-        if (remainingCredits === 0) {
+        if (remainingCredits <= 0) {
             return;
         }
         let credits = 0;
         let eligibleSlots: Slot[] = [];
         while (eligibleSlots.length === 0) {
-            credits = random(1, remainingCredits);
+            credits = random(1, 4);
             for (const slot of this.data.slots) {
                 if (
                     slot.credits === credits &&
-                    slot.lectureType === course.lectureType
+                    slot.lectureType === course.lectureType &&
+                    allottedSlots.indexOf(slot) === -1
                 ) {
                     eligibleSlots.push(slot);
                 }
