@@ -3,8 +3,36 @@ import GeneticAlgorithm from "./geneticAlgorithm";
 import Logger from "./utils/logger";
 
 const execute = () => {
+    const generatePlotData = false;
+    if (generatePlotData) {
+        const upperBound = 10000;
+        const result: [number, number, number][] = [];
+        for (let i = 0; i <= 10; ++i) {
+            const data = new Data(Math.max(i, 2), i);
+            const geneticAlgo = new GeneticAlgorithm(data);
+            const [numGenerations, fitness] = geneticAlgo.execute(upperBound);
+            result.push([data.courses.length, numGenerations, fitness]);
+        }
+        console.log(result);
+
+        /* Results
+            [37, 235, 1],
+            [41, 3475, 1],
+            [45, 10000, 0.07916666666666666],
+            [49, 10000, 0.000576923076923077],
+            [53, 10000, 0.059375],
+            [57, 10000, 0.03958333333333333],
+            [61, 10000, 0.00032386363636363635],
+            [65, 10000, 0.000038306451612903224],
+            [69, 10000, 0.00004656862745098038],
+            [73, 10000, 0.000095],
+            [77, 10000, 0.00006850961538461538],
+        */
+        return;
+    }
+
     const verbose = false;
-    const data = new Data();
+    const data = new Data(2, 1);
     const logger = new Logger(data);
     const geneticAlgo = new GeneticAlgorithm(data);
 

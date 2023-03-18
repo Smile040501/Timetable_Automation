@@ -7,7 +7,7 @@ import Slot from "./models/slot";
 import Interval from "./utils/interval";
 import Department from "./models/department";
 
-const departmentDist: {
+type DepartmentDist = {
     [prop: string]: {
         numFaculty: number;
         courses: {
@@ -17,77 +17,80 @@ const departmentDist: {
             };
         };
     };
-} = expandObject({
-    [`${Departments.CSE}, ${Departments.EE}`]: {
-        numFaculty: 2,
-        courses: {
-            [CourseType.PMT]: {
-                num: 2,
-                credits: [3, 4, 5],
-            },
-            [CourseType.PMP]: {
-                num: 2,
-                credits: [3],
-            },
-            [CourseType.PME]: {
-                num: 1,
-                credits: [3, 4, 5],
-            },
-            [CourseType.OE]: {
-                num: 0,
-                credits: [3, 4, 5],
-            },
-        },
-    },
-    [`${Departments.ME}, ${Departments.CE}`]: {
-        numFaculty: 2,
-        courses: {
-            [CourseType.PMT]: {
-                num: 2,
-                credits: [3, 4, 5],
-            },
-            [CourseType.PMP]: {
-                num: 2,
-                credits: [3],
-            },
-            [CourseType.PME]: {
-                num: 1,
-                credits: [3, 4, 5],
-            },
-            [CourseType.OE]: {
-                num: 0,
-                credits: [3, 4, 5],
+};
+
+const generateDepartmentDist = (numFaculty: number, numPME: number) =>
+    expandObject({
+        [`${Departments.CSE}, ${Departments.EE}`]: {
+            numFaculty: numFaculty,
+            courses: {
+                [CourseType.PMT]: {
+                    num: 2,
+                    credits: [3, 4, 5],
+                },
+                [CourseType.PMP]: {
+                    num: 2,
+                    credits: [3],
+                },
+                [CourseType.PME]: {
+                    num: numPME,
+                    credits: [3, 4, 5],
+                },
+                [CourseType.OE]: {
+                    num: 0,
+                    credits: [3, 4, 5],
+                },
             },
         },
-    },
-    [Departments.GCE]: {
-        numFaculty: 5,
-        courses: {
-            [CourseType.GCE]: {
-                num: 5,
-                credits: [3],
+        [`${Departments.ME}, ${Departments.CE}`]: {
+            numFaculty: numFaculty,
+            courses: {
+                [CourseType.PMT]: {
+                    num: 2,
+                    credits: [3, 4, 5],
+                },
+                [CourseType.PMP]: {
+                    num: 2,
+                    credits: [3],
+                },
+                [CourseType.PME]: {
+                    num: numPME,
+                    credits: [3, 4, 5],
+                },
+                [CourseType.OE]: {
+                    num: 0,
+                    credits: [3, 4, 5],
+                },
             },
         },
-    },
-    [Departments.SME]: {
-        numFaculty: 5,
-        courses: {
-            [CourseType.SME]: {
-                num: 5,
-                credits: [3],
+        [Departments.GCE]: {
+            numFaculty: 5,
+            courses: {
+                [CourseType.GCE]: {
+                    num: 5,
+                    credits: [3],
+                },
             },
         },
-    },
-    [Departments.HSE]: {
-        numFaculty: 5,
-        courses: {
-            [CourseType.HSE]: {
-                num: 5,
-                credits: [3],
+        [Departments.SME]: {
+            numFaculty: 5,
+            courses: {
+                [CourseType.SME]: {
+                    num: 5,
+                    credits: [3],
+                },
             },
         },
-    },
-});
+        [Departments.HSE]: {
+            numFaculty: 5,
+            courses: {
+                [CourseType.HSE]: {
+                    num: 5,
+                    credits: [3],
+                },
+            },
+        },
+    });
 const NUM_ROOMS = 30;
 const campuses = ["Nila", "Ahalia"];
 const roomCapacity = [45, 60, 100];
@@ -118,7 +121,7 @@ const generateRooms = (numRooms: number) => {
     return rooms;
 };
 
-const generateDepartments = () => {
+const generateDepartments = (departmentDist: DepartmentDist) => {
     const departments: { [prop: string]: Department } = {};
     Object.keys(departmentDist).forEach((dept, i) => {
         const faculties: Faculty[] = [];
@@ -130,7 +133,10 @@ const generateDepartments = () => {
     return departments;
 };
 
-const generateCourses = (departments: { [prop: string]: Department }) => {
+const generateCourses = (
+    departments: { [prop: string]: Department },
+    departmentDist: DepartmentDist
+) => {
     const courses: Course[] = [];
     let courseCode = 1;
     Object.keys(departmentDist).forEach((dept) => {
@@ -317,6 +323,7 @@ const generateSlots = () => [
 ];
 
 export default class Data {
+    public departmentDist: DepartmentDist;
     public rooms: Room[];
     public slots: Slot[];
     public courses: Course[];
@@ -324,11 +331,12 @@ export default class Data {
     public departmentsWithConflicts: Departments[];
     public departmentsWithNoConflicts: Departments[];
 
-    constructor() {
+    constructor(numFaculty: number, numPME: number) {
+        this.departmentDist = generateDepartmentDist(numFaculty, numPME);
         this.rooms = generateRooms(NUM_ROOMS);
         this.slots = generateSlots();
-        this.departments = generateDepartments();
-        this.courses = generateCourses(this.departments);
+        this.departments = generateDepartments(this.departmentDist);
+        this.courses = generateCourses(this.departments, this.departmentDist);
         this.departmentsWithConflicts = [
             Departments.CSE,
             Departments.EE,

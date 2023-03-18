@@ -89,7 +89,7 @@ export default class GeneticAlgorithm {
         return tournamentPop;
     };
 
-    execute = () => {
+    execute = (upperBound = -1) => {
         let generationNumber = 0;
 
         while (this.population.schedules[0].fitness < 1.0) {
@@ -100,10 +100,14 @@ export default class GeneticAlgorithm {
             );
             this.population = this.evolve(this.population);
             this.population.sort();
+            if (upperBound !== -1 && generationNumber === upperBound) {
+                break;
+            }
         }
         console.log(
             `End:
                 Conflicts: ${this.population.schedules[0].conflicts.length}, Fitness : ${this.population.schedules[0].fitness}`
         );
+        return [generationNumber, this.population.schedules[0].fitness];
     };
 }
