@@ -63,10 +63,7 @@ const execute = () => {
         geneticAlgo.population.schedules[0].classes,
         data
     );
-    console.log(
-        "Conflicts FINALLLLLLLLLLLLLLLLLLLLLLL: ",
-        geneticAlgo.population.schedules[0].conflicts
-    );
+
     console.log(simulatedAlgo.execute());
 
     const bestSchedule = geneticAlgo.population.schedules[0];
