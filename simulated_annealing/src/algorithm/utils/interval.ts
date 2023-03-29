@@ -67,10 +67,10 @@ export default class Interval {
         }
     };
 
-    isOverlapping = (i: Interval) => {
+    static isOverlapping = (i1: Interval, i2: Interval) => {
         const [currentTotalStartMins, currentTotalEndMins] =
-            Interval.getMinutes(this);
-        const [totalStartMins, totalEndMins] = Interval.getMinutes(i);
+            Interval.getMinutes(i1);
+        const [totalStartMins, totalEndMins] = Interval.getMinutes(i2);
 
         return !(
             currentTotalEndMins < totalStartMins ||
@@ -78,28 +78,28 @@ export default class Interval {
         );
     };
 
-    isBefore = (i: Interval) => {
-        if (this.startHours < i.startHours) {
+    static isBefore = (i1: Interval, i2: Interval) => {
+        if (i1.startHours < i2.startHours) {
             return true;
-        } else if (this.startHours === i.startHours) {
-            return this.startMinutes <= i.startMinutes;
+        } else if (i1.startHours === i2.startHours) {
+            return i1.startMinutes <= i2.startMinutes;
         } else {
             return false;
         }
     };
 
-    doesStartsSame = (i: Interval) => {
+    static doesStartsSame = (i1: Interval, i2: Interval) => {
         return (
-            this.startHours === i.startHours &&
-            this.startMinutes === i.startMinutes
+            i1.startHours === i2.startHours &&
+            i1.startMinutes === i2.startMinutes
         );
     };
 
-    getGap = (i: Interval) => {
+    static getGap = (i1: Interval, i2: Interval) => {
         const [currTotalStartMinutes, currTotalEndMinutes] =
-            Interval.getMinutes(this);
-        const [totalStartMinutes, totalEndMinutes] = Interval.getMinutes(i);
-        if (this.isBefore(i)) {
+            Interval.getMinutes(i1);
+        const [totalStartMinutes, totalEndMinutes] = Interval.getMinutes(i2);
+        if (Interval.isBefore(i1, i2)) {
             return totalStartMinutes - currTotalEndMinutes;
         }
         return currTotalStartMinutes - totalEndMinutes;

@@ -58,7 +58,7 @@ const execute = () => {
     const logger = new Logger(data);
     const geneticAlgo = new GeneticAlgorithm(data);
 
-    geneticAlgo.execute(10000);
+    geneticAlgo.execute(1000);
     const simulatedAlgo = new SimulatedAnnealing(
         geneticAlgo.population.schedules[0].classes,
         data

@@ -5,15 +5,19 @@ import sample from "lodash/sample";
 import Data from "./data";
 import Schedule from "./schedule";
 import Class from "./class";
-import { ConflictType, CourseType } from "./utils/enums";
+import { ConflictType, CourseType, LectureType, WeekDay } from "./utils/enums";
 import { pullAt } from "lodash";
+import Course from "./models/course";
+import Slot from "./models/slot";
+import Room from "./models/room";
+import Interval from "./utils/interval";
 
 export default class SimulatedAnnealing {
     HARD_CONSTRAINT_MULTIPLIER = 100000; // TODO
     SOFT_CONSTRAINT_MULTIPLIER = 100; // TODO
     INITIAL_TEMPERATURE = 100000; // TODO
-    FINAL_TEMPERATURE = 0.001; // TODO
-    N_MOVE = 1000; // TODO
+    FINAL_TEMPERATURE = 0.00001; // TODO
+    N_MOVE = 500; // TODO
 
     constructor(public currClassAllocation: Class[], public data: Data) {}
 
@@ -47,7 +51,7 @@ export default class SimulatedAnnealing {
         let costVal = 0;
         let tempCurrClassAllocation = cloneDeep(currClassAllocation);
 
-        for (const cls of currClassAllocation) {
+        for (const cls of tempCurrClassAllocation) {
             let arr = tempCurrClassAllocation.filter(
                 (iterCls) => iterCls !== cls
             );
@@ -78,7 +82,7 @@ export default class SimulatedAnnealing {
 
         let tempCurrClassAllocation = cloneDeep(currClassAllocation);
 
-        for (const cls of currClassAllocation) {
+        for (const cls of tempCurrClassAllocation) {
             let arr = tempCurrClassAllocation.filter(
                 (iterCls) => iterCls !== cls
             );
@@ -94,16 +98,19 @@ export default class SimulatedAnnealing {
                 )
                     console.error("StudentGroup ConflictType error");
 
-                if (
-                    (cls.course.courseType === CourseType.PMP ||
-                        cls.course.courseType === CourseType.PMT) &&
-                    (studentGroupConflict.otherInfo === "PMP" ||
-                        studentGroupConflict.otherInfo === "PMT")
-                )
-                    costVal += this.HARD_CONSTRAINT_MULTIPLIER;
-                else costVal += this.SOFT_CONSTRAINT_MULTIPLIER;
+                // if (
+                //     (cls.course.courseType === CourseType.PMP ||
+                //         cls.course.courseType === CourseType.PMT) &&
+                //     (studentGroupConflict.otherInfo === "PMP" ||
+                //         studentGroupConflict.otherInfo === "PMT")
+                // ) {
+                //     costVal += this.HARD_CONSTRAINT_MULTIPLIER;
+                //     totConflicts++; // TODO - Change this later
+                // } else costVal += this.SOFT_CONSTRAINT_MULTIPLIER;
+                costVal += this.HARD_CONSTRAINT_MULTIPLIER;
                 totConflicts++;
             }
+            // console.log("Student conflicts log", studentGroupConflicts);
         }
 
         if (returnConflicts) return totConflicts;
@@ -117,7 +124,7 @@ export default class SimulatedAnnealing {
         let costVal = 0;
         let tempCurrClassAllocation = cloneDeep(currClassAllocation);
 
-        for (const cls of currClassAllocation) {
+        for (const cls of tempCurrClassAllocation) {
             let arr = tempCurrClassAllocation.filter(
                 (iterCls) => iterCls !== cls
             );
@@ -183,15 +190,20 @@ export default class SimulatedAnnealing {
         //     conflicts += Schedule.hasConflicts(cls, arr, this.data).length;
         // }
         // return conflicts / 2;
+        let t = this.studentGroupConflictCost(currClassAllocation, true);
+        if (t % 2 !== 0 && t <= 41) {
+            console.log("Hi");
+            t = this.studentGroupConflictCost(currClassAllocation, true);
+        }
         conflicts =
             this.roomCapacityConflictCost(currClassAllocation, true) +
-            this.instructorConflictCost(currClassAllocation, true) +
-            this.studentGroupConflictCost(currClassAllocation, true) +
-            this.roomConflictCost(currClassAllocation, true);
+            this.instructorConflictCost(currClassAllocation, true) / 2 +
+            this.studentGroupConflictCost(currClassAllocation, true) / 2 +
+            this.roomConflictCost(currClassAllocation, true) / 2;
         // this.facultyTravelConflictCost(currClassAllocation, true) +
         // this.studentTravelConflictCost(currClassAllocation, true);
 
-        return conflicts / 2;
+        return conflicts;
     };
 
     cost = (currClassAllocation: Class[]) => {
@@ -306,7 +318,92 @@ export default class SimulatedAnnealing {
         let currTemperature = this.INITIAL_TEMPERATURE;
         let bestAllocation = this.currClassAllocation;
 
-        while (Math.abs(currTemperature - this.FINAL_TEMPERATURE) >= 0.0001) {
+        const c1 = {
+            id: 16,
+            course: {
+                id: 16,
+                code: "C16",
+                name: "C16",
+                credits: [1, 1, 1, 3],
+                courseType: "PME",
+                lectureType: "Normal",
+                maxNumberOfStudents: 60,
+                faculties: [
+                    {
+                        id: 107,
+                        name: "F17",
+                    },
+                ],
+                department: "EE",
+                needsSlot: true,
+                totalCredits: 3,
+            } as Course,
+            slots: [
+                {
+                    id: 12,
+                    name: "F",
+                    lectureType: "Normal" as LectureType,
+                    dayTime: [
+                        ["Tuesday" as WeekDay, new Interval("09:00", "10:15")],
+                        ["Thursday" as WeekDay, new Interval("09:00", "10:15")],
+                        ["Friday" as WeekDay, new Interval("17:00", "17:50")],
+                    ] as [WeekDay, Interval][],
+                    credits: 4,
+                } as Slot,
+            ] as Slot[],
+            room: {
+                id: 23,
+                name: "R23",
+                lectureType: "Normal",
+                capacity: 100,
+                campus: "Ahalia",
+            } as Room,
+        } as Class;
+
+        const c2 = {
+            id: 12,
+            course: {
+                id: 12,
+                code: "C12",
+                name: "C12",
+                credits: [1, 1, 1, 3],
+                courseType: "PMP",
+                lectureType: "Lab",
+                maxNumberOfStudents: 100,
+                faculties: [
+                    {
+                        id: 103,
+                        name: "F13",
+                    },
+                ],
+                department: "EE",
+                needsSlot: true,
+                totalCredits: 3,
+            } as Course,
+            slots: [
+                {
+                    id: 9,
+                    name: "P1",
+                    lectureType: "Lab",
+                    dayTime: [["Monday", new Interval("10:00", "12:50")]],
+                    credits: 3,
+                },
+            ] as Slot[],
+            room: {
+                id: 29,
+                name: "R29",
+                lectureType: "Lab",
+                capacity: 100,
+                campus: "Ahalia",
+            } as Room,
+        } as Class;
+
+        // console.log(this.totalConflicts([c1, c2]));
+        // return;
+
+        while (
+            Math.abs(currTemperature - this.FINAL_TEMPERATURE) >= 0.0000001
+        ) {
             let nextAllocation = this.neighbor(),
                 currCost = this.cost(this.currClassAllocation),
                 nextCost = this.cost(nextAllocation),

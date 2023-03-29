@@ -130,7 +130,7 @@ export default class Schedule {
                 }
 
                 // If Classes overlap
-                if (cls1.id !== cls2.id && cls1.isOverlapping(cls2)) {
+                if (cls1.id !== cls2.id && Class.isOverlapping(cls1, cls2)) {
                     // Same Instructor Booking Conflict
                     if (
                         intersection(
@@ -205,7 +205,7 @@ export default class Schedule {
                     continue;
                 }
 
-                const gap = previousInterval.getGap(interval);
+                const gap = Interval.getGap(previousInterval, interval);
                 let haveCommonFaculty = false,
                     haveCommonStudent = false;
 
@@ -313,7 +313,7 @@ export default class Schedule {
                 result[weekIdx].get(startMinutes)!.push(ci);
                 if (
                     intervalsSet.findIndex((interval) =>
-                        interval.doesStartsSame(ci[1])
+                        Interval.doesStartsSame(interval, ci[1])
                     ) === -1
                 ) {
                     intervalsSet.push(ci[1]);
@@ -321,7 +321,7 @@ export default class Schedule {
             });
         });
         intervalsSet.sort((i1, i2) => {
-            if (i1.isBefore(i2)) {
+            if (Interval.isBefore(i1, i2)) {
                 return -1;
             }
             return 1;
@@ -528,7 +528,7 @@ export default class Schedule {
                 cls.id !== cls2.id &&
                 cls.course.needsSlot &&
                 cls2.course.needsSlot &&
-                cls.isOverlapping(cls2) &&
+                Class.isOverlapping(cls, cls2) &&
                 // Instructor Booking Conflict
                 intersection(cls.course.faculties, cls2.course.faculties)
                     .length !== 0
@@ -553,20 +553,32 @@ export default class Schedule {
                 cls.id !== cls2.id &&
                 cls.course.needsSlot &&
                 cls2.course.needsSlot &&
-                cls.isOverlapping(cls2) &&
+                Class.isOverlapping(cls, cls2) &&
                 // Student Booking Conflict
                 cls.course.department === cls2.course.department &&
                 // Classes are from department with conflicts
                 data.departmentsWithConflicts.indexOf(cls.course.department) !==
                     -1
             ) {
-                conflicts.push(
-                    new Conflict(
-                        ConflictType.StudentBooking,
-                        [cls, cls2],
-                        cls2.course.courseType.toString()
-                    )
-                );
+                // conflicts.push(
+                //     new Conflict(
+                //         ConflictType.StudentBooking,
+                //         [cls, cls2],
+                //         cls2.course.courseType.toString()
+                //     )
+                // );
+
+                // Don't allow any other course from same department with PMT and PMP courses
+                if (
+                    cls.course.courseType === CourseType.PMT ||
+                    cls.course.courseType === CourseType.PMP ||
+                    cls2.course.courseType === CourseType.PMT ||
+                    cls2.course.courseType === CourseType.PMP
+                ) {
+                    conflicts.push(
+                        new Conflict(ConflictType.StudentBooking, [cls, cls2])
+                    );
+                }
             }
         }
         return conflicts;
@@ -580,7 +592,7 @@ export default class Schedule {
                 cls.id !== cls2.id &&
                 cls.course.needsSlot &&
                 cls2.course.needsSlot &&
-                cls.isOverlapping(cls2) &&
+                Class.isOverlapping(cls, cls2) &&
                 // Room Booking Conflict
                 cls.room === cls2.room
             ) {
@@ -615,7 +627,7 @@ export default class Schedule {
                     continue;
                 }
 
-                const gap = previousInterval.getGap(interval);
+                const gap = Interval.getGap(previousInterval, interval);
                 let haveCommonFaculty = false;
 
                 for (const cls1 of previousClasses) {
@@ -680,7 +692,7 @@ export default class Schedule {
                     continue;
                 }
 
-                const gap = previousInterval.getGap(interval);
+                const gap = Interval.getGap(previousInterval, interval);
                 let haveCommonStudents = false;
 
                 for (const cls1 of previousClasses) {
@@ -785,7 +797,7 @@ export default class Schedule {
                 result[weekIdx].get(startMinutes)!.push(ci);
                 if (
                     intervalsSet.findIndex((interval) =>
-                        interval.doesStartsSame(ci[1])
+                        Interval.doesStartsSame(interval, ci[1])
                     ) === -1
                 ) {
                     intervalsSet.push(ci[1]);
@@ -793,7 +805,7 @@ export default class Schedule {
             });
         });
         intervalsSet.sort((i1, i2) => {
-            if (i1.isBefore(i2)) {
+            if (Interval.isBefore(i1, i2)) {
                 return -1;
             }
             return 1;

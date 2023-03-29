@@ -11,15 +11,15 @@ export default class Class {
         public room?: Room
     ) {}
 
-    isOverlapping = (cls: Class) => {
+    static isOverlapping = (cls1: Class, cls2: Class) => {
         let ans = false;
-        this.slots.forEach((s1) => {
-            cls.slots.forEach((s2) => {
-                if (s1.isOverlapping(s2)) {
+        for (const s1 of cls1.slots) {
+            for (const s2 of cls2.slots) {
+                if (Slot.isOverlapping(s1, s2)) {
                     ans = true;
                 }
-            });
-        });
+            }
+        }
         return ans;
     };
 
