@@ -1,0 +1,162 @@
+[
+    {
+        "name": "R1",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R2",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Nila"
+    },
+    {
+        "name": "R3",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Ahalia"
+    },
+    { "name": "R4", "lectureType": "Normal", "capacity": 60, "campus": "Nila" },
+    {
+        "name": "R5",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    { "name": "R6", "lectureType": "Normal", "capacity": 45, "campus": "Nila" },
+    {
+        "name": "R7",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R8",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Nila"
+    },
+    { "name": "R9", "lectureType": "Lab", "capacity": 100, "campus": "Ahalia" },
+    {
+        "name": "R10",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Nila"
+    },
+    {
+        "name": "R11",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R12",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Nila"
+    },
+    {
+        "name": "R13",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R14",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Nila"
+    },
+    {
+        "name": "R15",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R16",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Nila"
+    },
+    {
+        "name": "R17",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R18",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Nila"
+    },
+    {
+        "name": "R19",
+        "lectureType": "Lab",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R20",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Nila"
+    },
+    {
+        "name": "R21",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R22",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Nila"
+    },
+    {
+        "name": "R23",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R24",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Nila"
+    },
+    {
+        "name": "R25",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R26",
+        "lectureType": "Normal",
+        "capacity": 100,
+        "campus": "Nila"
+    },
+    {
+        "name": "R27",
+        "lectureType": "Normal",
+        "capacity": 45,
+        "campus": "Ahalia"
+    },
+    {
+        "name": "R28",
+        "lectureType": "Normal",
+        "capacity": 60,
+        "campus": "Nila"
+    },
+    {
+        "name": "R29",
+        "lectureType": "Lab",
+        "capacity": 100,
+        "campus": "Ahalia"
+    },
+    { "name": "R30", "lectureType": "Normal", "capacity": 45, "campus": "Nila" }
+]
