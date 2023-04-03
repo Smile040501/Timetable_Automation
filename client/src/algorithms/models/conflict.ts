@@ -5,7 +5,7 @@ export default class Conflict {
     constructor(
         public conflictType: ConflictType,
         public conflictingClasses: Class[],
-        public otherInfo: string = ""
+        public otherInfo: string | number = ""
     ) {}
 
     toString = () =>

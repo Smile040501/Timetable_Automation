@@ -1,16 +1,11 @@
 import cloneDeep from "lodash/cloneDeep";
-import sampleSize from "lodash/sampleSize";
+import pullAt from "lodash/pullAt";
 import sample from "lodash/sample";
+import sampleSize from "lodash/sampleSize";
 
-import Data from "./data";
-import Schedule from "./schedule";
-import Class from "./class";
-import { ConflictType, CourseType, LectureType, WeekDay } from "./utils/enums";
-import { pullAt } from "lodash";
-import Course from "./models/course";
-import Slot from "./models/slot";
-import Room from "./models/room";
-import Interval from "./utils/interval";
+import Class from "../models/class";
+import Data from "../models/data";
+import { ConflictType, CourseType } from "../utils/enums";
 
 export default class SimulatedAnnealing {
     HARD_CONSTRAINT_MULTIPLIER = 100000; // TODO
@@ -28,7 +23,7 @@ export default class SimulatedAnnealing {
         let costVal = 0;
 
         for (const cls of currClassAllocation) {
-            let roomCapacityConflicts = Schedule.hasRoomCapacityConflict(cls);
+            let roomCapacityConflicts = Class.hasRoomCapacityConflict(cls);
             for (const roomCapacityConflict of roomCapacityConflicts) {
                 if (
                     roomCapacityConflict.conflictType !==
@@ -49,13 +44,10 @@ export default class SimulatedAnnealing {
         returnConflicts = false
     ) => {
         let costVal = 0;
-        let tempCurrClassAllocation = cloneDeep(currClassAllocation);
 
-        for (const cls of tempCurrClassAllocation) {
-            let arr = tempCurrClassAllocation.filter(
-                (iterCls) => iterCls !== cls
-            );
-            let instructorConflicts = Schedule.hasInstructorBookingConflict(
+        for (const cls of currClassAllocation) {
+            let arr = currClassAllocation.filter((iterCls) => iterCls !== cls);
+            let instructorConflicts = Class.hasInstructorBookingConflict(
                 cls,
                 arr
             );
@@ -80,13 +72,9 @@ export default class SimulatedAnnealing {
         let costVal = 0,
             totConflicts = 0;
 
-        let tempCurrClassAllocation = cloneDeep(currClassAllocation);
-
-        for (const cls of tempCurrClassAllocation) {
-            let arr = tempCurrClassAllocation.filter(
-                (iterCls) => iterCls !== cls
-            );
-            let studentGroupConflicts = Schedule.hasStudentBookingConflict(
+        for (const cls of currClassAllocation) {
+            let arr = currClassAllocation.filter((iterCls) => iterCls !== cls);
+            let studentGroupConflicts = Class.hasStudentBookingConflict(
                 cls,
                 arr,
                 this.data
@@ -122,13 +110,10 @@ export default class SimulatedAnnealing {
         returnConflicts = false
     ) => {
         let costVal = 0;
-        let tempCurrClassAllocation = cloneDeep(currClassAllocation);
 
-        for (const cls of tempCurrClassAllocation) {
-            let arr = tempCurrClassAllocation.filter(
-                (iterCls) => iterCls !== cls
-            );
-            let roomConflicts = Schedule.hasRoomBookingConflict(cls, arr);
+        for (const cls of currClassAllocation) {
+            let arr = currClassAllocation.filter((iterCls) => iterCls !== cls);
+            let roomConflicts = Class.hasRoomBookingConflict(cls, arr);
             for (const roomConflict of roomConflicts) {
                 if (roomConflict.conflictType !== ConflictType.RoomBooking)
                     console.error("RoomBooking ConflictType error");
@@ -145,14 +130,15 @@ export default class SimulatedAnnealing {
         returnConflicts = false
     ) => {
         let costVal = 0;
-        let [currSchedule] =
-            Schedule.getWeekdayWiseSchedule(currClassAllocation);
+        let [currSchedule] = Class.getWeekdayWiseSchedule(currClassAllocation);
+
+        const facultyTravelConflicts =
+            Class.hasFacultyTravelConflicts(currSchedule);
 
         costVal +=
-            Schedule.hasFacultyTravelConflicts(currSchedule).length === 0
+            facultyTravelConflicts.length === 0
                 ? 0
-                : (Schedule.hasFacultyTravelConflicts(currSchedule)[0]
-                      .otherInfo as number);
+                : (facultyTravelConflicts[0].otherInfo as number);
 
         if (returnConflicts) return costVal;
         return costVal * this.SOFT_CONSTRAINT_MULTIPLIER;
@@ -163,17 +149,17 @@ export default class SimulatedAnnealing {
         returnConflicts = false
     ) => {
         let costVal = 0;
-        let [currSchedule] =
-            Schedule.getWeekdayWiseSchedule(currClassAllocation);
+        let [currSchedule] = Class.getWeekdayWiseSchedule(currClassAllocation);
+
+        const studentTravelConflicts = Class.hasStudentTravelConflicts(
+            currSchedule,
+            this.data
+        );
 
         costVal +=
-            Schedule.hasStudentTravelConflicts(currSchedule, this.data)
-                .length === 0
+            studentTravelConflicts.length === 0
                 ? 0
-                : (Schedule.hasStudentTravelConflicts(
-                      currSchedule,
-                      this.data
-                  )[0].otherInfo as number);
+                : (studentTravelConflicts[0].otherInfo as number);
 
         if (returnConflicts) return costVal;
         return costVal * this.SOFT_CONSTRAINT_MULTIPLIER;
@@ -190,11 +176,6 @@ export default class SimulatedAnnealing {
         //     conflicts += Schedule.hasConflicts(cls, arr, this.data).length;
         // }
         // return conflicts / 2;
-        let t = this.studentGroupConflictCost(currClassAllocation, true);
-        if (t % 2 !== 0 && t <= 41) {
-            console.log("Hi");
-            t = this.studentGroupConflictCost(currClassAllocation, true);
-        }
         conflicts =
             this.roomCapacityConflictCost(currClassAllocation, true) +
             this.instructorConflictCost(currClassAllocation, true) / 2 +
@@ -250,7 +231,7 @@ export default class SimulatedAnnealing {
     };
 
     neighbor = () => {
-        // TODO - Check if logic if neighbor function is working properly
+        // TODO - Check if logic of neighbor function is working properly
         let breakCheck = false;
         let copyCurrClassAllocation = cloneDeep(this.currClassAllocation);
 
@@ -318,89 +299,6 @@ export default class SimulatedAnnealing {
         let currTemperature = this.INITIAL_TEMPERATURE;
         let bestAllocation = this.currClassAllocation;
 
-        const c1 = {
-            id: 16,
-            course: {
-                id: 16,
-                code: "C16",
-                name: "C16",
-                credits: [1, 1, 1, 3],
-                courseType: "PME",
-                lectureType: "Normal",
-                maxNumberOfStudents: 60,
-                faculties: [
-                    {
-                        id: 107,
-                        name: "F17",
-                    },
-                ],
-                department: "EE",
-                needsSlot: true,
-                totalCredits: 3,
-            } as Course,
-            slots: [
-                {
-                    id: 12,
-                    name: "F",
-                    lectureType: "Normal" as LectureType,
-                    dayTime: [
-                        ["Tuesday" as WeekDay, new Interval("09:00", "10:15")],
-                        ["Thursday" as WeekDay, new Interval("09:00", "10:15")],
-                        ["Friday" as WeekDay, new Interval("17:00", "17:50")],
-                    ] as [WeekDay, Interval][],
-                    credits: 4,
-                } as Slot,
-            ] as Slot[],
-            room: {
-                id: 23,
-                name: "R23",
-                lectureType: "Normal",
-                capacity: 100,
-                campus: "Ahalia",
-            } as Room,
-        } as Class;
-
-        const c2 = {
-            id: 12,
-            course: {
-                id: 12,
-                code: "C12",
-                name: "C12",
-                credits: [1, 1, 1, 3],
-                courseType: "PMP",
-                lectureType: "Lab",
-                maxNumberOfStudents: 100,
-                faculties: [
-                    {
-                        id: 103,
-                        name: "F13",
-                    },
-                ],
-                department: "EE",
-                needsSlot: true,
-                totalCredits: 3,
-            } as Course,
-            slots: [
-                {
-                    id: 9,
-                    name: "P1",
-                    lectureType: "Lab",
-                    dayTime: [["Monday", new Interval("10:00", "12:50")]],
-                    credits: 3,
-                },
-            ] as Slot[],
-            room: {
-                id: 29,
-                name: "R29",
-                lectureType: "Lab",
-                capacity: 100,
-                campus: "Ahalia",
-            } as Room,
-        } as Class;
-
-        // console.log(this.totalConflicts([c1, c2]));
-        // return;
-
         while (
             Math.abs(currTemperature - this.FINAL_TEMPERATURE) >= 0.0000001
         ) {
@@ -409,13 +307,13 @@ export default class SimulatedAnnealing {
                 nextCost = this.cost(nextAllocation),
                 bestCost = this.cost(bestAllocation);
 
-            console.log("Best Cost:", bestCost);
-            console.log("   Current Temperature:", currTemperature);
-            console.log(
-                "      Current conflicts:",
-                this.totalConflicts(bestAllocation)
-            );
+            console.log(`Best Cost: ${bestCost}
+            Current Temperature: ${currTemperature}, Current Conflicts: ${this.totalConflicts(
+                bestAllocation
+            )}`);
+
             if (currCost < bestCost) bestAllocation = this.currClassAllocation;
+
             if (
                 this.acceptanceProbability(
                     currCost,
@@ -424,6 +322,7 @@ export default class SimulatedAnnealing {
                 ) >= Math.random()
             )
                 this.currClassAllocation = nextAllocation;
+
             currTemperature = this.temperature(currTemperature);
         }
 

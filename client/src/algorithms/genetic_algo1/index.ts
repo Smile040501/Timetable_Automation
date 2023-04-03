@@ -2,6 +2,7 @@ import Data from "../models/data";
 import GeneticAlgorithm from "./geneticAlgorithm";
 import Logger from "../utils/logger";
 import { logBestScheduleResults, logVerboseData } from "../utils/utils";
+import Schedule from "./schedule";
 
 const generatePlotData = (
     numPlotPoints: number,
@@ -37,17 +38,25 @@ const generatePlotData = (
     */
 };
 
-const execute = () => {
-    const RANDOM_DATA = true;
+const execute = (configData?: {
+    VERBOSE?: boolean;
+    RANDOM_DATA?: boolean;
+    UPPER_BOUND?: number;
+    MIN_NUM_FACULTY?: number;
+    NUM_PME?: number;
+}) => {
     const GENERATE_PLOT_DATA = false;
-    const VERBOSE = process.env.NODE_ENV !== "production";
     const NUM_PLOT_POINTS = 10;
-    const UPPER_BOUND = 10000;
-    const MIN_NUM_FACULTY = 2;
-    const NUM_PME = 1;
+
+    const VERBOSE =
+        configData?.VERBOSE ?? process.env.NODE_ENV !== "production";
+    const RANDOM_DATA = configData?.RANDOM_DATA ?? true;
+    const UPPER_BOUND = configData?.UPPER_BOUND ?? 10000;
+    const MIN_NUM_FACULTY = configData?.MIN_NUM_FACULTY ?? 2;
+    const NUM_PME = configData?.NUM_PME ?? 1;
 
     if (GENERATE_PLOT_DATA) {
-        return generatePlotData(
+        generatePlotData(
             NUM_PLOT_POINTS,
             RANDOM_DATA,
             MIN_NUM_FACULTY,
@@ -63,7 +72,14 @@ const execute = () => {
     const geneticAlgo = new GeneticAlgorithm(data);
     geneticAlgo.execute(UPPER_BOUND);
 
-    logBestScheduleResults(geneticAlgo.population, data);
+    const bestSchedule = geneticAlgo.population.schedules[0] as Schedule;
+    logBestScheduleResults(bestSchedule.classes, bestSchedule.conflicts, data);
+
+    return [data, logger, geneticAlgo.population.schedules[0] as Schedule] as [
+        Data,
+        Logger,
+        Schedule
+    ];
 };
 
 export default execute;

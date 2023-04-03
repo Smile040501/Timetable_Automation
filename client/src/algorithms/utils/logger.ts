@@ -208,7 +208,7 @@ export default class Logger {
                 conflict.conflictingClasses
                     .map((cls) => cls.toString())
                     .join(", "),
-                conflict.otherInfo,
+                conflict.otherInfo.toString(),
             ]);
         }
         return table(conflictsStr);

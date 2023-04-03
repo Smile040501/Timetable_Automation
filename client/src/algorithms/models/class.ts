@@ -308,7 +308,7 @@ export default class Class {
             }
         }
         return hasConflicts
-            ? [new Conflict(ConflictType.FacultyTravel, [])]
+            ? [new Conflict(ConflictType.FacultyTravel, [], facultyTravel)]
             : [];
     };
 
@@ -373,7 +373,7 @@ export default class Class {
             }
         }
         return hasConflicts
-            ? [new Conflict(ConflictType.StudentTravel, [])]
+            ? [new Conflict(ConflictType.StudentTravel, [], studentTravel)]
             : [];
     };
 

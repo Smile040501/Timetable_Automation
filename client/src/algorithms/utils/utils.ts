@@ -3,7 +3,6 @@ import Conflict from "../models/conflict";
 import Course from "../models/course";
 import Data from "../models/data";
 import Faculty from "../models/faculty";
-import Population from "../models/population";
 import Room from "../models/room";
 import Slot from "../models/slot";
 import Logger from "./logger";
@@ -70,38 +69,31 @@ export const logVerboseData = (data: Data, logger: Logger) => {
     console.log(slots);
 };
 
-export const logBestScheduleResults = (population: Population, data: Data) => {
-    const bestSchedule = population.schedules[0];
-    const bestScheduleClasses = bestSchedule.classes;
-    const bestScheduleConflicts =
-        "conflicts" in bestSchedule ? bestSchedule.conflicts : [];
-
-    console.log("Current Population:", population);
-    console.log("Best Schedule:", bestScheduleClasses);
+export const logBestScheduleResults = (
+    classes: Class[],
+    conflicts: Conflict[],
+    data: Data
+) => {
+    console.log("Best Schedule:", classes);
     console.log(
         "Schedule WRT Classes\n",
-        Logger.logScheduleWRTClasses(bestScheduleClasses)
+        Logger.logScheduleWRTClasses(classes)
     );
     console.log(
         "Schedule WRT Slots\n",
-        Logger.logScheduleWRTSlots(bestScheduleClasses, data)
+        Logger.logScheduleWRTSlots(classes, data)
     );
     console.log(
         "Schedule WRT Rooms\n",
-        Logger.logScheduleWRTRooms(bestScheduleClasses, data)
+        Logger.logScheduleWRTRooms(classes, data)
     );
     console.log(
         "Schedule WRT Faculties\n",
-        Logger.logScheduleWRTFaculties(bestScheduleClasses, data)
+        Logger.logScheduleWRTFaculties(classes, data)
     );
-    console.log(
-        "Conflicts\n",
-        Logger.logConflicts(bestScheduleConflicts as Conflict[])
-    );
+    console.log("Conflicts\n", Logger.logConflicts(conflicts as Conflict[]));
     console.log(
         "WeekWise Schedule\n",
-        Logger.logWeekWiseSchedule(
-            Class.getWeekdayWiseSchedule(bestScheduleClasses)
-        )
+        Logger.logWeekWiseSchedule(Class.getWeekdayWiseSchedule(classes))
     );
 };
