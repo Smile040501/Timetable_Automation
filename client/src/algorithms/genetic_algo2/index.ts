@@ -4,12 +4,26 @@ import Logger from "../utils/logger";
 import { logBestScheduleResults, logVerboseData } from "../utils/utils";
 import Schedule from "./schedule";
 
-const execute = (configData?: { VERBOSE?: boolean; RANDOM_DATA?: boolean }) => {
+const execute = (configData?: {
+    VERBOSE?: boolean;
+    RANDOM_DATA?: boolean;
+    MIN_NUM_FACULTY?: number;
+    NUM_PME?: number;
+    EXPANDED_SLOTS?: boolean;
+}) => {
     const VERBOSE =
         configData?.VERBOSE ?? process.env.NODE_ENV !== "production";
     const RANDOM_DATA = configData?.RANDOM_DATA ?? true;
+    const MIN_NUM_FACULTY = configData?.MIN_NUM_FACULTY ?? 5;
+    const NUM_PME = configData?.NUM_PME ?? 1;
+    const EXPANDED_SLOTS = configData?.EXPANDED_SLOTS ?? false;
 
-    const data = new Data(RANDOM_DATA);
+    const data = new Data(
+        RANDOM_DATA,
+        MIN_NUM_FACULTY,
+        NUM_PME,
+        EXPANDED_SLOTS
+    );
     const logger = new Logger();
 
     if (VERBOSE) logVerboseData(data, logger);

@@ -46,7 +46,7 @@ export default class Slot {
         const expandedSlots: Slot[] = [];
         s.dayTime.forEach((dayTime, i) => {
             expandedSlots.push(
-                new Slot(s.slotID * 100 + i, this.name, s.lectureType, [
+                new Slot(s.slotID * 100 + i, s.name, s.lectureType, [
                     [dayTime[0], dayTime[1]],
                 ])
             );

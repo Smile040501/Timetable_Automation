@@ -1,5 +1,7 @@
 import intersection from "lodash/intersection";
 import random from "lodash/random";
+import range from "lodash/range";
+import sample from "lodash/sample";
 
 import Class from "../models/class";
 import Conflict from "../models/conflict";
@@ -71,10 +73,13 @@ export default class Schedule implements ISchedule {
         let credits = 0;
         let eligibleSlots: Slot[] = [];
         while (eligibleSlots.length === 0) {
-            credits = random(
-                this.data.minSlotCredits,
-                this.data.maxSlotCredits
-            );
+            credits = sample(
+                range(
+                    this.data.minSlotCredits,
+                    this.data.maxSlotCredits + 0.5,
+                    0.5
+                )
+            )!;
             for (const slot of this.data.slots) {
                 if (
                     slot.credits === credits &&

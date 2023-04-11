@@ -44,6 +44,7 @@ const execute = (configData?: {
     UPPER_BOUND?: number;
     MIN_NUM_FACULTY?: number;
     NUM_PME?: number;
+    EXPANDED_SLOTS?: boolean;
 }) => {
     const GENERATE_PLOT_DATA = false;
     const NUM_PLOT_POINTS = 10;
@@ -54,6 +55,7 @@ const execute = (configData?: {
     const UPPER_BOUND = configData?.UPPER_BOUND ?? 10000;
     const MIN_NUM_FACULTY = configData?.MIN_NUM_FACULTY ?? 2;
     const NUM_PME = configData?.NUM_PME ?? 1;
+    const EXPANDED_SLOTS = configData?.EXPANDED_SLOTS ?? false;
 
     if (GENERATE_PLOT_DATA) {
         generatePlotData(
@@ -64,7 +66,12 @@ const execute = (configData?: {
         );
     }
 
-    const data = new Data(RANDOM_DATA, MIN_NUM_FACULTY, NUM_PME);
+    const data = new Data(
+        RANDOM_DATA,
+        MIN_NUM_FACULTY,
+        NUM_PME,
+        EXPANDED_SLOTS
+    );
     const logger = new Logger();
 
     if (VERBOSE) logVerboseData(data, logger);

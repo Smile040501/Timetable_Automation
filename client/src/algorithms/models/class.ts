@@ -395,7 +395,7 @@ export default class Class {
             combinations.get(credits)!.get(lectureType)!.push(allottedSlots);
             return;
         }
-        for (let i = data.maxSlotCredits; i >= data.minSlotCredits; --i) {
+        for (let i = data.maxSlotCredits; i >= data.minSlotCredits; i -= 0.5) {
             for (const slot of data.slots) {
                 if (
                     slot.credits === i &&

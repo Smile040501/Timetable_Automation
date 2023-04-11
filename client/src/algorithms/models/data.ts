@@ -32,7 +32,12 @@ export default class Data {
     public maxSlotCredits: number;
     public minSlotCredits: number;
 
-    constructor(random: boolean, numFaculty = 5, numPME = 1) {
+    constructor(
+        random: boolean,
+        numFaculty = 5,
+        numPME = 1,
+        expandedSlots = false
+    ) {
         if (random) {
             this.departmentDist = generateRandomDepartDist(numFaculty, numPME);
             this.rooms = generateRandomRooms(RANDOM_NUM_ROOMS);
@@ -53,6 +58,10 @@ export default class Data {
             this.rooms = generateRooms();
             [this.courses, this.faculties] = generateCourses();
             this.slots = generateSlots();
+        }
+
+        if (expandedSlots) {
+            this.slots = this.slots.flatMap((s) => Slot.getExpandedSlots(s));
         }
 
         this.departmentsWithConflicts = ["CSE", "EE", "ME", "CE", "GENERAL"];

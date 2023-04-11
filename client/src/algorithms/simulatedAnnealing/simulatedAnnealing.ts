@@ -281,6 +281,13 @@ export default class SimulatedAnnealing {
             )
                 continue;
 
+            // The new random slot should not be alloted already
+            if (
+                randomClass1.slots.indexOf(randomSlotFromData1) !== -1 ||
+                randomClass2.slots.indexOf(randomSlotFromData2) !== -1
+            )
+                continue;
+
             pullAt(
                 randomClass1.slots,
                 randomClass1.slots.indexOf(randomSlotFromClass1!)
@@ -327,6 +334,10 @@ export default class SimulatedAnnealing {
                     randomSlotFromData!.credits <
                 randomClass1.course.totalCredits
             )
+                continue;
+
+            // The new random slot should not be alloted already
+            if (randomClass1.slots.indexOf(randomSlotFromData!) !== -1)
                 continue;
 
             pullAt(
@@ -384,6 +395,13 @@ export default class SimulatedAnnealing {
             if (
                 randomSlotFromClass1!.lectureType !==
                 randomSlotFromClass2!.lectureType
+            )
+                continue;
+
+            // The new random slot should not be alloted already
+            if (
+                randomClass1.slots.indexOf(randomSlotFromClass2!) !== -1 ||
+                randomClass2.slots.indexOf(randomSlotFromClass1!) !== -1
             )
                 continue;
 

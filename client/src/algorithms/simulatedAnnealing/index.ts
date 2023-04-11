@@ -4,10 +4,11 @@ import SimulatedAnnealing from "./simulatedAnnealing";
 
 const execute = () => {
     const VERBOSE = process.env.NODE_ENV !== "production";
-    const RANDOM_DATA = false;
+    const RANDOM_DATA = true;
     const UPPER_BOUND = 2000;
     const MIN_NUM_FACULTY = 2;
     const NUM_PME = 1;
+    const EXPANDED_SLOTS = true;
 
     const [data, , bestSchedule] = executeRandomGeneticAlgo({
         VERBOSE,
@@ -15,6 +16,7 @@ const execute = () => {
         UPPER_BOUND,
         MIN_NUM_FACULTY,
         NUM_PME,
+        EXPANDED_SLOTS,
     });
 
     const simulatedAlgo = new SimulatedAnnealing(bestSchedule.classes, data);
