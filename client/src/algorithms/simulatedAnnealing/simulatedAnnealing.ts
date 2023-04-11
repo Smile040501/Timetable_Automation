@@ -10,7 +10,7 @@ import { ConflictType, CourseType } from "../utils/enums";
 export default class SimulatedAnnealing {
     HARD_CONSTRAINT_MULTIPLIER = 100000; // TODO
     SOFT_CONSTRAINT_MULTIPLIER = 100; // TODO
-    INITIAL_TEMPERATURE = 100000; // TODO
+    INITIAL_TEMPERATURE = 80000; // TODO
     FINAL_TEMPERATURE = 0.00001; // TODO
     N_MOVE = 500; // TODO
 
@@ -230,6 +230,117 @@ export default class SimulatedAnnealing {
         else return Math.exp((oldCost - newCost) / temperature);
     };
 
+    neighbor2 = () => {
+        let breakCheck = false;
+        let copyCurrClassAllocation = cloneDeep(this.currClassAllocation);
+
+        while (!breakCheck) {
+            let [randomClass1, randomClass2] = sampleSize(
+                copyCurrClassAllocation,
+                2
+            );
+
+            if (randomClass1.course.courseType === CourseType.PROJECT) continue;
+            if (randomClass2.course.courseType === CourseType.PROJECT) continue;
+
+            let randomSlotFromClass1 = sample(randomClass1.slots),
+                totSlotCredit1 = 0;
+
+            let randomSlotFromClass2 = sample(randomClass1.slots),
+                totSlotCredit2 = 0;
+
+            for (const slt of randomClass1.slots) totSlotCredit1 += slt.credits;
+            for (const slt of randomClass2.slots) totSlotCredit2 += slt.credits;
+
+            let [randomSlotFromData1, randomSlotFromData2] = sampleSize(
+                this.data.slots,
+                2
+            );
+
+            if (
+                randomSlotFromData1!.lectureType !==
+                    randomSlotFromClass1!.lectureType &&
+                randomSlotFromData2!.lectureType !==
+                    randomSlotFromClass2!.lectureType
+            )
+                continue;
+
+            if (
+                totSlotCredit1 -
+                    randomSlotFromClass1!.credits +
+                    randomSlotFromData1!.credits <
+                randomClass1.course.totalCredits
+            )
+                continue;
+
+            if (
+                totSlotCredit2 -
+                    randomSlotFromClass2!.credits +
+                    randomSlotFromData2!.credits <
+                randomClass2.course.totalCredits
+            )
+                continue;
+
+            pullAt(
+                randomClass1.slots,
+                randomClass1.slots.indexOf(randomSlotFromClass1!)
+            );
+            randomClass1.slots.push(randomSlotFromData1!);
+
+            pullAt(
+                randomClass2.slots,
+                randomClass2.slots.indexOf(randomSlotFromClass2!)
+            );
+            randomClass2.slots.push(randomSlotFromData2!);
+
+            breakCheck = true;
+        }
+
+        return copyCurrClassAllocation;
+    };
+
+    neighbor1 = () => {
+        let breakCheck = false;
+        let copyCurrClassAllocation = cloneDeep(this.currClassAllocation);
+
+        while (!breakCheck) {
+            let [randomClass1] = sampleSize(copyCurrClassAllocation, 1);
+
+            if (randomClass1.course.courseType === CourseType.PROJECT) continue;
+
+            let randomSlotFromClass1 = sample(randomClass1.slots),
+                totSlotCredit1 = 0;
+
+            for (const slt of randomClass1.slots) totSlotCredit1 += slt.credits;
+
+            let randomSlotFromData = sample(this.data.slots);
+
+            if (
+                randomSlotFromData!.lectureType !==
+                randomSlotFromClass1!.lectureType
+            )
+                continue;
+
+            if (
+                totSlotCredit1 -
+                    randomSlotFromClass1!.credits +
+                    randomSlotFromData!.credits <
+                randomClass1.course.totalCredits
+            )
+                continue;
+
+            pullAt(
+                randomClass1.slots,
+                randomClass1.slots.indexOf(randomSlotFromClass1!)
+            );
+            randomClass1.slots.push(randomSlotFromData!);
+
+            breakCheck = true;
+        }
+
+        return copyCurrClassAllocation;
+    };
+
     neighbor = () => {
         // TODO - Check if logic of neighbor function is working properly
         let breakCheck = false;
@@ -299,21 +410,35 @@ export default class SimulatedAnnealing {
         let currTemperature = this.INITIAL_TEMPERATURE;
         let bestAllocation = this.currClassAllocation;
 
-        while (
-            Math.abs(currTemperature - this.FINAL_TEMPERATURE) >= 0.0000001
-        ) {
-            let nextAllocation = this.neighbor(),
-                currCost = this.cost(this.currClassAllocation),
+        let iter_mod_5 = 0;
+        let reHeat = 0;
+        let turn = 0;
+
+        while (Math.abs(currTemperature - this.FINAL_TEMPERATURE) >= 0.000001) {
+            let nextAllocation = null;
+            if (turn === 0) nextAllocation = this.neighbor();
+            else if (turn === 1) nextAllocation = this.neighbor1();
+            else nextAllocation = this.neighbor2();
+
+            turn = (turn + 1) % 3;
+
+            let currCost = this.cost(this.currClassAllocation),
                 nextCost = this.cost(nextAllocation),
                 bestCost = this.cost(bestAllocation);
 
-            console.log(`Best Cost: ${bestCost}
-            Current Temperature: ${currTemperature}, Current Conflicts: ${this.totalConflicts(
-                bestAllocation
-            )}`);
+            console.log("Best Cost:", bestCost);
+            console.log("   Current Temperature:", currTemperature);
+            console.log(
+                "      Current conflicts:",
+                this.totalConflicts(this.currClassAllocation)
+            );
+            console.log(
+                "      Best conflicts:",
+                this.totalConflicts(bestAllocation)
+            );
+            console.log("      Reheat value:", reHeat);
 
             if (currCost < bestCost) bestAllocation = this.currClassAllocation;
-
             if (
                 this.acceptanceProbability(
                     currCost,
@@ -323,7 +448,20 @@ export default class SimulatedAnnealing {
             )
                 this.currClassAllocation = nextAllocation;
 
-            currTemperature = this.temperature(currTemperature);
+            if (iter_mod_5 === 2)
+                currTemperature = this.temperature(currTemperature);
+            iter_mod_5 = (iter_mod_5 + 1) % 3;
+
+            if (this.cost(this.currClassAllocation) === currCost) {
+                if (reHeat === 360) reHeat -= 100;
+                reHeat++;
+            } else reHeat = 0;
+
+            if (reHeat === 360) {
+                currTemperature = this.INITIAL_TEMPERATURE;
+            }
+
+            if (currCost <= 2 * this.HARD_CONSTRAINT_MULTIPLIER) break;
         }
 
         return bestAllocation;
