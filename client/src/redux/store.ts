@@ -1,7 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import uploadedDataReducer from "./slices/uploadedData";
+
 export const store = configureStore({
-    reducer: {},
+    reducer: {
+        uploadedData: uploadedDataReducer,
+    },
     devTools: process.env.NODE_ENV !== "production",
 });
 

@@ -1,30 +1,18 @@
 import React from "react";
+import { Provider } from "react-redux";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import logo from "./logo.svg";
-import "./App.css";
-import executeGeneticAlgo1 from "./algorithms/genetic_algo1";
-import executeGeneticAlgo2 from "./algorithms/genetic_algo2";
-import executeSimulatedAnnealing from "./algorithms/simulatedAnnealing";
+import { store } from "./redux/store";
+import routes from "./routes";
 
-function App() {
+const router = createBrowserRouter(routes);
+
+const App: React.FC = () => {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <button onClick={() => executeGeneticAlgo1()}>
-                    Execute Genetic Algo 1
-                </button>
-                <br />
-                <button onClick={() => executeGeneticAlgo2()}>
-                    Execute Genetic Algo 2
-                </button>
-                <br />
-                <button onClick={() => executeSimulatedAnnealing()}>
-                    Execute Simulated Annealing
-                </button>
-            </header>
-        </div>
+        <Provider store={store}>
+            <RouterProvider router={router} />
+        </Provider>
     );
-}
+};
 
 export default App;
