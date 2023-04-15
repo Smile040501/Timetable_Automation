@@ -1,8 +1,10 @@
+import Class from "../models/class";
 import Data from "../models/data";
+import Schedule from "./schedule";
 import GeneticAlgorithm from "./geneticAlgorithm";
 import Logger from "../utils/logger";
 import { logBestScheduleResults, logVerboseData } from "../utils/utils";
-import Schedule from "./schedule";
+import { AlgorithmConfigData } from "../../interfaces";
 
 const generatePlotData = (
     numPlotPoints: number,
@@ -38,20 +40,13 @@ const generatePlotData = (
     */
 };
 
-const execute = (configData?: {
-    VERBOSE?: boolean;
-    RANDOM_DATA?: boolean;
-    UPPER_BOUND?: number;
-    MIN_NUM_FACULTY?: number;
-    NUM_PME?: number;
-    EXPANDED_SLOTS?: boolean;
-}) => {
+const execute = async (configData?: AlgorithmConfigData) => {
     const GENERATE_PLOT_DATA = false;
     const NUM_PLOT_POINTS = 10;
 
     const VERBOSE =
         configData?.VERBOSE ?? process.env.NODE_ENV !== "production";
-    const RANDOM_DATA = configData?.RANDOM_DATA ?? true;
+    let RANDOM_DATA = configData?.RANDOM_DATA ?? true;
     const UPPER_BOUND = configData?.UPPER_BOUND ?? 10000;
     const MIN_NUM_FACULTY = configData?.MIN_NUM_FACULTY ?? 2;
     const NUM_PME = configData?.NUM_PME ?? 1;
@@ -66,11 +61,23 @@ const execute = (configData?: {
         );
     }
 
+    if (
+        configData?.inputCourses?.length !== 0 ||
+        configData?.inputRooms?.length !== 0 ||
+        configData?.inputSlots?.length !== 0
+    ) {
+        RANDOM_DATA = false;
+    }
+
     const data = new Data(
         RANDOM_DATA,
         MIN_NUM_FACULTY,
         NUM_PME,
-        EXPANDED_SLOTS
+        EXPANDED_SLOTS,
+        configData?.logFunc,
+        configData?.inputCourses,
+        configData?.inputRooms,
+        configData?.inputSlots
     );
     const logger = new Logger();
 
@@ -82,11 +89,7 @@ const execute = (configData?: {
     const bestSchedule = geneticAlgo.population.schedules[0] as Schedule;
     logBestScheduleResults(bestSchedule.classes, bestSchedule.conflicts, data);
 
-    return [data, logger, geneticAlgo.population.schedules[0] as Schedule] as [
-        Data,
-        Logger,
-        Schedule
-    ];
+    return [data, logger, bestSchedule.classes] as [Data, Logger, Class[]];
 };
 
 export default execute;

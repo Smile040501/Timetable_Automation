@@ -19,6 +19,7 @@ import {
     generateCourses,
     generateSlots,
 } from "../dataset/timetable";
+import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../interfaces";
 
 export default class Data {
     public departmentDist: DepartmentDist | undefined;
@@ -31,12 +32,17 @@ export default class Data {
     public possibleSlotCombinations: Map<number, Map<string, Slot[][]>>;
     public maxSlotCredits: number;
     public minSlotCredits: number;
+    public logFunction: (str: any) => void;
 
     constructor(
         random: boolean,
         numFaculty = 5,
         numPME = 1,
-        expandedSlots = false
+        expandedSlots = false,
+        logFunc?: (str: any) => void,
+        inputCourses: CourseAsJSON[] = [],
+        inputRooms: RoomAsJSON[] = [],
+        inputSlots: SlotAsJSON[] = []
     ) {
         if (random) {
             this.departmentDist = generateRandomDepartDist(numFaculty, numPME);
@@ -55,9 +61,15 @@ export default class Data {
 
             this.slots = generateRandomSlots();
         } else {
-            this.rooms = generateRooms();
-            [this.courses, this.faculties] = generateCourses();
-            this.slots = generateSlots();
+            this.rooms = generateRooms(
+                inputRooms.length !== 0 ? inputRooms : undefined
+            );
+            [this.courses, this.faculties] = generateCourses(
+                inputCourses.length !== 0 ? inputCourses : undefined
+            );
+            this.slots = generateSlots(
+                inputSlots.length !== 0 ? inputSlots : undefined
+            );
         }
 
         if (expandedSlots) {
@@ -74,6 +86,12 @@ export default class Data {
         this.maxSlotCredits = max(this.slots.map((s) => s.credits))!;
         this.minSlotCredits = min(this.slots.map((s) => s.credits))!;
 
-        console.log("Initial Data:", this);
+        this.logFunction = (s) => {
+            console.log(s);
+            if (logFunc) logFunc(s);
+        };
+
+        this.logFunction("Initial Data:");
+        this.logFunction(this);
     }
 }

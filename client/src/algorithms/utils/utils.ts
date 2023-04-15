@@ -42,31 +42,32 @@ export const expandObject = (obj: { [prop: string]: any }) => {
 };
 
 export const exportDataAsJSON = (data: Data) => {
-    console.log("Slots:\n", Slot.exportAsJSON(data.slots));
-    console.log("Courses:\n", Course.exportAsJSON(data.courses));
-    console.log("Rooms:\n", Room.exportAsJSON(data.rooms));
-    console.log("Faculties:\n", Faculty.exportAsJSON(data.faculties));
+    data.logFunction(`Slots:\n ${Slot.exportAsJSON(data.slots)}`);
+    data.logFunction(`Courses:\n ${Course.exportAsJSON(data.courses)}`);
+    data.logFunction(`Rooms:\n ${Room.exportAsJSON(data.rooms)}`);
+    data.logFunction(`Faculties:\n ${Faculty.exportAsJSON(data.faculties)}`);
 };
 
 export const logVerboseData = (data: Data, logger: Logger) => {
     exportDataAsJSON(data);
 
-    console.log("Data Object:", data);
+    data.logFunction("Data Object:");
+    data.logFunction(data);
 
-    console.log("> All Available Data");
+    data.logFunction("> All Available Data");
     const { courses, rooms, slots } = Logger.logAllData(data);
-    console.log(
+    data.logFunction(
         "======================================= COURSES ======================================="
     );
-    console.log(courses);
-    console.log(
+    data.logFunction(courses);
+    data.logFunction(
         "======================================= ROOMS ======================================="
     );
-    console.log(rooms);
-    console.log(
+    data.logFunction(rooms);
+    data.logFunction(
         "======================================= SLOTS ======================================="
     );
-    console.log(slots);
+    data.logFunction(slots);
 };
 
 export const logBestScheduleResults = (
@@ -74,26 +75,29 @@ export const logBestScheduleResults = (
     conflicts: Conflict[],
     data: Data
 ) => {
-    console.log("Best Schedule:", classes);
-    console.log(
-        "Schedule WRT Classes\n",
-        Logger.logScheduleWRTClasses(classes)
+    data.logFunction("Best Schedule:");
+    data.logFunction(classes);
+    data.logFunction(
+        `Schedule WRT Classes\n ${Logger.logScheduleWRTClasses(classes)}`
     );
-    console.log(
-        "Schedule WRT Slots\n",
-        Logger.logScheduleWRTSlots(classes, data)
+    data.logFunction(
+        `Schedule WRT Slots\n ${Logger.logScheduleWRTSlots(classes, data)}`
     );
-    console.log(
-        "Schedule WRT Rooms\n",
-        Logger.logScheduleWRTRooms(classes, data)
+    data.logFunction(
+        `Schedule WRT Rooms\n ${Logger.logScheduleWRTRooms(classes, data)}`
     );
-    console.log(
-        "Schedule WRT Faculties\n",
-        Logger.logScheduleWRTFaculties(classes, data)
+    data.logFunction(
+        `Schedule WRT Faculties\n ${Logger.logScheduleWRTFaculties(
+            classes,
+            data
+        )}`
     );
-    console.log("Conflicts\n", Logger.logConflicts(conflicts as Conflict[]));
-    console.log(
-        "WeekWise Schedule\n",
-        Logger.logWeekWiseSchedule(Class.getWeekdayWiseSchedule(classes))
+    data.logFunction(
+        `Conflicts\n ${Logger.logConflicts(conflicts as Conflict[])}`
+    );
+    data.logFunction(
+        `WeekWise Schedule\n ${Logger.logWeekWiseSchedule(
+            Class.getWeekdayWiseSchedule(classes)
+        )}`
     );
 };

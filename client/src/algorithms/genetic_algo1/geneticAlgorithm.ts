@@ -104,7 +104,7 @@ export default class GeneticAlgorithm {
 
         while (true) {
             ++generationNumber;
-            console.log(
+            this.data.logFunction(
                 `Generation: ${generationNumber}
                 Conflicts: ${bestSchedule.conflicts.length}, Fitness: ${bestSchedule.fitness}`
             );
@@ -130,7 +130,7 @@ export default class GeneticAlgorithm {
             }
         }
 
-        console.log(
+        this.data.logFunction(
             `End:
                 Conflicts: ${bestSchedule.conflicts.length}, Fitness: ${bestSchedule.fitness}`
         );

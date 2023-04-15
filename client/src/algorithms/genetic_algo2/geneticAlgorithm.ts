@@ -224,13 +224,13 @@ export default class GeneticAlgorithm {
         return tournamentPop;
     };
 
-    execute = () => {
+    execute = (upperBound = -1) => {
         let generationNumber = 0;
         let bestSchedule = this.population.schedules[0] as Schedule;
 
-        while (bestSchedule.fitness < this.BEST_SCHEDULE_FITNESS) {
+        while (true) {
             ++generationNumber;
-            console.log(
+            this.data.logFunction(
                 `Generation: ${generationNumber}, Total: ${bestSchedule.classes.length}
                 Allocated: ${bestSchedule.allocatedClasses.length}, Fitness: ${bestSchedule.fitness}`
             );
@@ -238,9 +238,15 @@ export default class GeneticAlgorithm {
             this.population = this.evolve(this.population);
             Population.sort(this.population.schedules);
             bestSchedule = this.population.schedules[0] as Schedule;
+
+            if (upperBound !== -1 && generationNumber === upperBound) break;
+
+            if (bestSchedule.fitness >= this.BEST_SCHEDULE_FITNESS) {
+                break;
+            }
         }
 
-        console.log(
+        this.data.logFunction(
             `End:
                 Allocated: ${bestSchedule.allocatedClasses.length}, Fitness: ${bestSchedule.fitness}`
         );

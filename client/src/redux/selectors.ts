@@ -22,3 +22,10 @@ export const makeSlotsSelector = () => {
         (slots) => slots
     );
 };
+
+export const makeClassesSelector = () => {
+    return createSelector(
+        (state: RootState) => state.generatedClasses.classes,
+        (classes) => classes
+    );
+};

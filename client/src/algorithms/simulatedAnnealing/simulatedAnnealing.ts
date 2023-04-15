@@ -98,7 +98,6 @@ export default class SimulatedAnnealing {
                 costVal += this.HARD_CONSTRAINT_MULTIPLIER;
                 totConflicts++;
             }
-            // console.log("Student conflicts log", studentGroupConflicts);
         }
 
         if (returnConflicts) return totConflicts;
@@ -444,17 +443,17 @@ export default class SimulatedAnnealing {
                 nextCost = this.cost(nextAllocation),
                 bestCost = this.cost(bestAllocation);
 
-            console.log("Best Cost:", bestCost);
-            console.log("   Current Temperature:", currTemperature);
-            console.log(
-                "      Current conflicts:",
-                this.totalConflicts(this.currClassAllocation)
+            this.data.logFunction(`Best Cost: ${bestCost}`);
+            this.data.logFunction(`   Current Temperature: ${currTemperature}`);
+            this.data.logFunction(
+                `      Current conflicts: ${this.totalConflicts(
+                    this.currClassAllocation
+                )}`
             );
-            console.log(
-                "      Best conflicts:",
-                this.totalConflicts(bestAllocation)
+            this.data.logFunction(
+                `      Best conflicts: ${this.totalConflicts(bestAllocation)}`
             );
-            console.log("      Reheat value:", reHeat);
+            this.data.logFunction(`      Reheat value: ${reHeat}`);
 
             if (currCost < bestCost) bestAllocation = this.currClassAllocation;
             if (

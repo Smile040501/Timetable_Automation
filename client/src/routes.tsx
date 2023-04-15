@@ -7,10 +7,12 @@ import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 
 import Dashboard from "./components/Dashboard";
+import GenerateTimetable from "./pages/GenerateTimetable";
 import Home from "./pages/Home";
 import UploadCourses from "./pages/UploadCourses";
 import UploadRooms from "./pages/UploadRooms";
 import UploadSlots from "./pages/UploadSlots";
+import Timetable from "./pages/Timetable";
 
 type RoutesArray = {
     path?: string;
@@ -58,10 +60,17 @@ const routes: RoutesArray = [
             },
             {
                 path: "/generateTimetable",
-                element: <Home />,
+                element: <GenerateTimetable />,
                 name: "Generate Timetable",
                 icon: <CalendarViewMonthRoundedIcon />,
                 hidden: false,
+            },
+            {
+                path: "/timetable",
+                element: <Timetable />,
+                name: "Timetable",
+                icon: <CalendarViewMonthRoundedIcon />,
+                hidden: true,
             },
         ],
     },

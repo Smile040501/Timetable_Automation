@@ -7,27 +7,27 @@ import UploadJSON from "../components/UploadJSON";
 import { uploadRooms } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeRoomsSelector } from "../redux/selectors";
-import { RoomsAsJSON, StringifiedValues } from "../utils/interfaces";
+import { RoomAsJSON, StringifiedValues } from "../interfaces";
 
 const UploadRooms: React.FC = () => {
     const dispatch = useAppDispatch();
     const roomsSelector = useMemo(makeRoomsSelector, []);
     const rooms = useAppSelector((state) => roomsSelector(state));
 
-    const handleChange = (rooms: RoomsAsJSON[]) => {
+    const handleChange = (rooms: RoomAsJSON[]) => {
         dispatch(uploadRooms(rooms));
     };
 
     return (
         <Grid container spacing={4}>
             <Grid item xs={12}>
-                <UploadJSON<RoomsAsJSON>
+                <UploadJSON<RoomAsJSON>
                     buttonText="Upload Rooms"
                     onUpload={handleChange}
                 />
             </Grid>
             <Grid item xs={12}>
-                <JSONTable<StringifiedValues<RoomsAsJSON>>
+                <JSONTable<StringifiedValues<RoomAsJSON>>
                     data={rooms.map((room) => ({
                         ...room,
                         capacity: room.capacity.toString(),

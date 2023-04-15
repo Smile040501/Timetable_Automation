@@ -60,7 +60,7 @@ export default class Schedule implements ISchedule {
                 this.unallocatedClasses.push(cls);
             }
         }
-        console.log("Initialized Schedule!");
+        this.data.logFunction("Initialized Schedule!");
         return this;
     }
 

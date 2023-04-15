@@ -1,7 +1,8 @@
 import Room from "../../models/room";
 import { LectureType } from "../../utils/enums";
+import { RoomAsJSON } from "../../../interfaces";
 
-const rooms = [
+const roomsAsTXT = [
     "A 112",
     "A 119",
     "A 120",
@@ -32,10 +33,10 @@ const rooms = [
 
 export const roomCapacities = [60, 100];
 
-export const generateRooms = (roomsInfo: string[] = rooms) => {
-    const results: Room[] = [];
-    for (let i = 0; i < roomsInfo.length; ++i) {
-        const roomName = roomsInfo[i];
+const getDefaultRoomsAsJSON = () => {
+    const rooms: RoomAsJSON[] = [];
+    for (let i = 0; i < roomsAsTXT.length; ++i) {
+        const roomName = roomsAsTXT[i];
         const lectureType = roomName.includes("Lab")
             ? LectureType.Lab
             : LectureType.Normal;
@@ -43,7 +44,27 @@ export const generateRooms = (roomsInfo: string[] = rooms) => {
             ? roomCapacities[roomCapacities.length - 1]
             : roomCapacities[0];
         const campus = roomName[0] === "A" ? "Ahalia" : "Nila";
-        results.push(new Room(i, roomName, lectureType, capacity, campus));
+        rooms.push({
+            name: roomName,
+            lectureType,
+            capacity,
+            campus,
+        });
     }
-    return results;
+    return rooms;
+};
+
+export const generateRooms = (
+    roomsAsJSON: RoomAsJSON[] = getDefaultRoomsAsJSON()
+) => {
+    return roomsAsJSON.map(
+        (roomInfo, roomIdx) =>
+            new Room(
+                roomIdx,
+                roomInfo.name,
+                roomInfo.lectureType,
+                roomInfo.capacity,
+                roomInfo.campus
+            )
+    );
 };

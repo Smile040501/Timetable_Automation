@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { CourseAsJSON, RoomsAsJSON, SlotsAsJSON } from "../../utils/interfaces";
+import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../interfaces";
 
 export interface UploadedDataState {
     courses: CourseAsJSON[];
-    rooms: RoomsAsJSON[];
-    slots: SlotsAsJSON[];
+    rooms: RoomAsJSON[];
+    slots: SlotAsJSON[];
 }
 
 const initialState: UploadedDataState = {
@@ -22,10 +22,10 @@ export const uploadedDataSlice = createSlice({
         uploadCourses: (state, action: PayloadAction<CourseAsJSON[]>) => {
             state.courses = action.payload;
         },
-        uploadRooms: (state, action: PayloadAction<RoomsAsJSON[]>) => {
+        uploadRooms: (state, action: PayloadAction<RoomAsJSON[]>) => {
             state.rooms = action.payload;
         },
-        uploadSlots: (state, action: PayloadAction<SlotsAsJSON[]>) => {
+        uploadSlots: (state, action: PayloadAction<SlotAsJSON[]>) => {
             state.slots = action.payload;
         },
     },

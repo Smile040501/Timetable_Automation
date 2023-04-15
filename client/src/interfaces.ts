@@ -13,15 +13,28 @@ export interface CourseAsJSON {
     department: string;
 }
 
-export interface RoomsAsJSON {
+export interface RoomAsJSON {
     name: string;
     lectureType: string;
     capacity: number;
     campus: string;
 }
 
-export interface SlotsAsJSON {
+export interface SlotAsJSON {
     name: string;
     lectureType: string;
     dayTime: [string, { start: string; end: string }][];
+}
+
+export interface AlgorithmConfigData {
+    VERBOSE?: boolean;
+    RANDOM_DATA?: boolean;
+    UPPER_BOUND?: number;
+    MIN_NUM_FACULTY?: number;
+    NUM_PME?: number;
+    EXPANDED_SLOTS?: boolean;
+    inputCourses?: CourseAsJSON[];
+    inputRooms?: RoomAsJSON[];
+    inputSlots?: SlotAsJSON[];
+    logFunc?: (log: any) => void;
 }

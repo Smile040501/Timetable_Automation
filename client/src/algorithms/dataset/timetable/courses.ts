@@ -1,6 +1,7 @@
 import Course from "../../models/course";
 import Faculty from "../../models/faculty";
 import { roomCapacities } from "./rooms";
+import { CourseAsJSON } from "../../../interfaces";
 
 const coursesAsTXT = [
     "PHY1 | Physics | COMMON | Normal | GENERAL | 2-1-0-3 | Soham Manni-Bibhu Sarangi-Moumita Nandy",
@@ -115,45 +116,44 @@ const coursesAsTXT = [
     "CY5104 | Synthesis, Energetics and Dynamics Lab 3 | PMP | Lab | DS | 0-0-3-2 | Mintu Porel",
 ];
 
-type CoursesAsObject = {
-    code: string;
-    name: string;
-    courseType: string;
-    lectureType: string;
-    department: string;
-    credits: string;
-    faculties: string;
-};
-
-const getCoursesAsObject = () => {
-    const courses: CoursesAsObject[] = [];
+const getDefaultCoursesAsJSON = () => {
+    const courses: CourseAsJSON[] = [];
     for (const courseStr of coursesAsTXT) {
         const courseFields = courseStr.split("|").map((str) => str.trim());
         courses.push({
             code: courseFields[0],
             name: courseFields[1],
+            credits: courseFields[5].split("-").map((c) => +c.trim()) as [
+                number,
+                number,
+                number,
+                number
+            ],
             courseType: courseFields[2],
             lectureType: courseFields[3],
+            maxNumberOfStudents:
+                courseFields[3] === "Lab"
+                    ? roomCapacities[roomCapacities.length - 1]
+                    : roomCapacities[0],
+            faculties: courseFields[6].split("-").map((fac) => fac.trim()),
             department: courseFields[4],
-            credits: courseFields[5],
-            faculties: courseFields[6].split("-").join(", "),
         });
     }
     return courses;
 };
 
 export const generateCourses = (
-    coursesAsObject: CoursesAsObject[] = getCoursesAsObject()
+    coursesAsJSON: CourseAsJSON[] = getDefaultCoursesAsJSON()
 ): [Course[], Faculty[]] => {
     const courses: Course[] = [];
     const faculties: Faculty[] = [];
 
     let facultyID = 1;
-    for (let i = 0; i < coursesAsObject.length; ++i) {
-        const courseInfo = coursesAsObject[i];
+    for (let i = 0; i < coursesAsJSON.length; ++i) {
+        const courseInfo = coursesAsJSON[i];
 
         const courseFaculties: Faculty[] = [];
-        for (const facultyName of courseInfo.faculties.split(", ")) {
+        for (const facultyName of courseInfo.faculties) {
             let faculty = faculties.find((fac) => fac.name === facultyName);
             if (!faculty) {
                 faculty = new Faculty(facultyID, facultyName);
@@ -163,33 +163,17 @@ export const generateCourses = (
             courseFaculties.push(faculty);
         }
 
-        const courseCode = courseInfo.code,
-            courseName = courseInfo.name,
-            courseCredits = courseInfo.credits.split("-").map((s) => +s) as [
-                number,
-                number,
-                number,
-                number
-            ],
-            courseType = courseInfo.courseType,
-            courseLectureType = courseInfo.lectureType,
-            courseMaxStudents =
-                courseInfo.lectureType === "Lab"
-                    ? roomCapacities[roomCapacities.length - 1]
-                    : roomCapacities[0],
-            courseDept = courseInfo.department;
-
         courses.push(
             new Course(
                 i + 1,
-                courseCode,
-                courseName,
-                courseCredits,
-                courseType,
-                courseLectureType,
-                courseMaxStudents,
+                courseInfo.code,
+                courseInfo.name,
+                courseInfo.credits,
+                courseInfo.courseType,
+                courseInfo.lectureType,
+                courseInfo.maxNumberOfStudents,
                 courseFaculties,
-                courseDept
+                courseInfo.department
             )
         );
     }

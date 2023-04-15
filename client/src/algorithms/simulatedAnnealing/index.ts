@@ -1,28 +1,22 @@
+import Class from "../models/class";
+import Data from "../models/data";
 import executeRandomGeneticAlgo from "../genetic_algo1";
 import { logBestScheduleResults } from "../utils/utils";
 import SimulatedAnnealing from "./simulatedAnnealing";
+import Logger from "../utils/logger";
+import { AlgorithmConfigData } from "../../interfaces";
 
-const execute = () => {
-    const VERBOSE = process.env.NODE_ENV !== "production";
-    const RANDOM_DATA = true;
-    const UPPER_BOUND = 2000;
-    const MIN_NUM_FACULTY = 2;
-    const NUM_PME = 1;
-    const EXPANDED_SLOTS = true;
+const execute = async (configData?: AlgorithmConfigData) => {
+    const [data, logger, bestScheduleClasses] = await executeRandomGeneticAlgo(
+        configData
+    );
 
-    const [data, , bestSchedule] = executeRandomGeneticAlgo({
-        VERBOSE,
-        RANDOM_DATA,
-        UPPER_BOUND,
-        MIN_NUM_FACULTY,
-        NUM_PME,
-        EXPANDED_SLOTS,
-    });
-
-    const simulatedAlgo = new SimulatedAnnealing(bestSchedule.classes, data);
+    const simulatedAlgo = new SimulatedAnnealing(bestScheduleClasses, data);
     const bestScheduleAllocation = simulatedAlgo.execute();
 
     logBestScheduleResults(bestScheduleAllocation, [], data);
+
+    return [data, logger, bestScheduleAllocation] as [Data, Logger, Class[]];
 };
 
 export default execute;

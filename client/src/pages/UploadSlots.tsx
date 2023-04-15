@@ -8,27 +8,27 @@ import UploadJSON from "../components/UploadJSON";
 import { uploadSlots } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeSlotsSelector } from "../redux/selectors";
-import { SlotsAsJSON, StringifiedValues } from "../utils/interfaces";
+import { SlotAsJSON, StringifiedValues } from "../interfaces";
 
 const UploadSlots: React.FC = () => {
     const dispatch = useAppDispatch();
     const slotsSelector = useMemo(makeSlotsSelector, []);
     const slots = useAppSelector((state) => slotsSelector(state));
 
-    const handleChange = (slots: SlotsAsJSON[]) => {
+    const handleChange = (slots: SlotAsJSON[]) => {
         dispatch(uploadSlots(slots));
     };
 
     return (
         <Grid container spacing={4}>
             <Grid item xs={12}>
-                <UploadJSON<SlotsAsJSON>
+                <UploadJSON<SlotAsJSON>
                     buttonText="Upload Slots"
                     onUpload={handleChange}
                 />
             </Grid>
             <Grid item xs={12}>
-                <JSONTable<StringifiedValues<SlotsAsJSON>>
+                <JSONTable<StringifiedValues<SlotAsJSON>>
                     data={slots.map((slot) => ({
                         ...slot,
                         dayTime: slot.dayTime

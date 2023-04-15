@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { styled } from "@mui/material/styles";
 
@@ -12,7 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
 
-import type { StringifiedValues } from "../utils/interfaces";
+import type { StringifiedValues } from "../interfaces";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -29,8 +29,8 @@ interface TableProps<T> {
 }
 
 const JSONTable = <T extends StringifiedValues<T>>({ data }: TableProps<T>) => {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -86,7 +86,7 @@ const JSONTable = <T extends StringifiedValues<T>>({ data }: TableProps<T>) => {
                                                         align="center"
                                                         sx={{
                                                             whiteSpace:
-                                                                "pre-line",
+                                                                "pre-wrap",
                                                         }}
                                                     >
                                                         {value as string}

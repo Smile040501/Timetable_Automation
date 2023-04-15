@@ -138,7 +138,10 @@ const Dashboard: React.FC = () => {
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                    <Container
+                        maxWidth="xl"
+                        sx={{ mt: 4, mb: 4, width: "98%" }}
+                    >
                         <Outlet />
                     </Container>
                 </Box>
