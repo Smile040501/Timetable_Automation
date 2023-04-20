@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
@@ -71,7 +71,7 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 const Dashboard: React.FC = () => {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
     };

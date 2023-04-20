@@ -1,258 +1,382 @@
-import React, { useMemo, useState, useRef, useEffect } from "react";
-import { Link as RouterLink, LinkProps } from "react-router-dom";
+import React, { ReactNode, useMemo, useState, useEffect } from "react";
+import { SxProps } from "@mui/material/styles";
+import cloneDeep from "lodash/cloneDeep";
 
-import { styled } from "@mui/material/styles";
-import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
-import MuiAccordionSummary, {
-    AccordionSummaryProps,
-} from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DayTimetable, { DayTimetableData } from "../components/DayTimetable";
+import SlotDetails from "../components/SlotDetails";
+import TimetableFilters from "../components/TimetableFilters";
 
-import executeRandomizedGeneticAlgo from "../algorithms/genetic_algo1";
-import executeGreedyGeneticAlgo from "../algorithms/genetic_algo2";
-import executeSimulatedAnnealing from "../algorithms/simulatedAnnealing";
-import { updateClasses } from "../redux/actions";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import {
-    makeCoursesSelector,
-    makeRoomsSelector,
-    makeSlotsSelector,
-    makeClassesSelector,
-} from "../redux/selectors";
+import Class from "../algorithms/models/class";
+import Data from "../algorithms/models/data";
+import Slot from "../algorithms/models/slot";
+import Interval from "../algorithms/utils/interval";
+import { CourseType, LectureType, WeekDay } from "../algorithms/utils/enums";
+import { getEnumKeys } from "../algorithms/utils/utils";
 
-const Accordion = styled((props: AccordionProps) => (
-    <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-    border: `1px solid ${theme.palette.divider}`,
-    "&:not(:last-child)": {
-        borderBottom: 0,
-    },
-    "&:before": {
-        display: "none",
-    },
-}));
+import { useAppSelector } from "../redux/hooks";
+import { makeClassesSelector, makeDataSelector } from "../redux/selectors";
+import { Filters } from "../interfaces";
 
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-    <MuiAccordionSummary
-        expandIcon={<ArrowForwardIosRoundedIcon sx={{ fontSize: "0.9rem" }} />}
-        {...props}
-    />
-))(({ theme }) => ({
-    backgroundColor: theme.palette.primary[theme.palette.mode],
-    flexDirection: "row-reverse",
-    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-        transform: "rotate(90deg)",
-    },
-    "& .MuiAccordionSummary-content": {
-        marginLeft: theme.spacing(1),
-    },
-}));
+// const times: DayTimetableData[] = [
+//     {
+//         name: "Monday",
+//         events: [
+//             {
+//                 start: "08:00",
+//                 end: "08:50",
+//                 text: getEventText(
+//                     <div>
+//                         <h3>Doctor Appointment</h3>
+//                         <b>Dr. Nick</b>
+//                         <br />
+//                         1-800-DOCTORB
+//                         <br />
+//                         The 'B' is for bargain!
+//                     </div>,
+//                     (e) => console.log("Hi")
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "08:10",
+//                 end: "09:00",
+//                 text: getEventText("Arrow", (e) => console.log("Hi")),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "09:45",
+//                 end: "10:30",
+//                 text: getEventText("Hi", (e) => console.log("Hi")),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "09:00",
+//                 end: "15:30",
+//                 text: getEventText("Hi", (e) => console.log("Hi")),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Tuesday",
+//         events: [
+//             {
+//                 start: "08:20",
+//                 end: "08:45",
+//                 text: getEventText("Meet with my lawyers.", (e) =>
+//                     console.log("Hi")
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Wednesday",
+//         events: [
+//             {
+//                 start: "09:00",
+//                 end: "09:30",
+//                 text: getEventText(
+//                     "I am doing something from 4:30-5:30pm on this date.",
+//                     (e) => console.log("Hi")
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                     whiteSpace: "normal",
+//                     wordWrap: "break-word",
+//                 },
+//             },
+//             {
+//                 start: "09:15",
+//                 end: "11:45",
+//                 text: getEventText(
+//                     "Goodbye … I never thought it would come to this. But here we are.",
+//                     (e) => console.log("Hi")
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Thursday",
+//         events: [
+//             {
+//                 start: "15:00",
+//                 end: "16:00",
+//                 text: getEventText("Another thing.", (e) => console.log("Hi")),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Friday",
+//         events: [
+//             {
+//                 start: "08:00",
+//                 end: "09:00",
+//                 text: getEventText("Another thing.", (e) => console.log("Hi")),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+// ];
 
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-    padding: theme.spacing(2),
-    borderTop: "1px solid rgba(0, 0, 0, .125)",
-    backgroundColor:
-        theme.palette.mode === "dark"
-            ? "rgba(255, 255, 255, .05)"
-            : "rgba(0, 0, 0, .03)",
-}));
-
-const LinkButton: React.FC<{ to: string; buttonText: string }> = (props) => {
-    const { to, buttonText } = props;
-
-    const CustomLink = useMemo(
-        () =>
-            React.forwardRef<HTMLAnchorElement, Omit<LinkProps, "to">>(
-                function Link(linkProps, ref) {
-                    return <RouterLink ref={ref} to={to} {...linkProps} />;
-                }
-            ),
-        [to]
-    );
-
-    return (
-        <Button
-            variant="contained"
-            size="large"
-            startIcon={<ArrowForwardRoundedIcon />}
-            sx={{
-                height: 53.5,
-            }}
-            component={CustomLink}
-        >
-            {buttonText}
-        </Button>
-    );
+const generateRandomColor = () => {
+    const hex = Math.floor(Math.random() * 0xffffff);
+    const color = "#" + hex.toString(16);
+    return color;
 };
 
-const algorithmOptions = [
-    {
-        name: "Randomized Genetic Algorithm",
-        value: "geneticAlgo1",
-        algorithm: executeRandomizedGeneticAlgo,
-    },
-    {
-        name: "Greedy and Maximal Genetic Algorithm",
-        value: "geneticAlgo2",
-        algorithm: executeGreedyGeneticAlgo,
-    },
-    {
-        name: "Simulated Annealing",
-        value: "simulatedAnnealing",
-        algorithm: executeSimulatedAnnealing,
-    },
-];
-
 const Timetable: React.FC = () => {
-    const dispatch = useAppDispatch();
+    const [classes, setClasses] = useState<[Class, Interval, Slot][]>([]);
+    const [displayedClasses, setDisplayedClasses] = useState<Class[]>([]);
+    const [weekDay, setWeekDay] = useState("");
+    const [slotColors] = useState(new Map<string, string>());
 
-    const coursesSelector = useMemo(makeCoursesSelector, []);
-    const roomsSelector = useMemo(makeRoomsSelector, []);
-    const slotsSelector = useMemo(makeSlotsSelector, []);
     const generatedClassesSelector = useMemo(makeClassesSelector, []);
+    const algorithmDataSelector = useMemo(makeDataSelector, []);
 
-    const inputCourses = useAppSelector(coursesSelector);
-    const inputRooms = useAppSelector(roomsSelector);
-    const inputSlots = useAppSelector(slotsSelector);
     const generatedClasses = useAppSelector(generatedClassesSelector);
+    const algorithmData = useAppSelector(algorithmDataSelector);
 
-    const [algorithm, setAlgorithm] = useState(algorithmOptions[0].value);
-    const [algorithmLogs, setAlgorithmLogs] = useState<string[]>([]);
-    const [expanded, setExpanded] = useState(false);
-
-    const bottomRef = useRef<HTMLDetailsElement>(null!);
-
-    const handleAlgorithmChange = (event: SelectChangeEvent) => {
-        setAlgorithm(event.target.value);
-        setExpanded(false);
-        setAlgorithmLogs([]);
+    const defaultEventCellStyles: SxProps = {
+        height: 0,
     };
 
-    const handleExpandedChange = (
-        event: React.SyntheticEvent,
-        isExpanded: boolean
+    const getEventText = (
+        text: ReactNode,
+        onClickHandler: React.MouseEventHandler<HTMLButtonElement>,
+        color?: string
     ) => {
-        setExpanded(isExpanded);
+        return (
+            <div style={{ height: "100%" }}>
+                <Button
+                    fullWidth
+                    sx={{
+                        height: "100%",
+                        flexGrow: 1,
+                        backgroundColor: color,
+                        "&:hover": {
+                            backgroundColor: color,
+                        },
+                        fontSize: 20,
+                    }}
+                    variant="contained"
+                    onClick={onClickHandler}
+                >
+                    {text}
+                </Button>
+            </div>
+        );
     };
 
-    const addAlgorithmLogs = (algorithmLog: any) => {
-        setAlgorithmLogs((previousLogs) => [
-            ...previousLogs,
-            typeof algorithmLog === "string" ? algorithmLog : "",
-            "\n",
-        ]);
+    const getTimetableData = (
+        generatedClasses: Class[]
+    ): DayTimetableData[] => {
+        const data: DayTimetableData[] = [];
+        const weekDays = getEnumKeys(WeekDay);
+        const [schedule] = Class.getWeekdayWiseSchedule(generatedClasses);
+
+        weekDays.forEach((weekDay, weekIdx) => {
+            data.push({
+                name: weekDay,
+                events: [],
+            });
+
+            schedule[weekIdx].forEach((cellData) => {
+                const cellEvents: {
+                    [slot: string]: [Class, Interval, Slot][];
+                } = {};
+                cellData.forEach((event) => {
+                    const [, , slot] = event;
+                    if (!cellEvents[slot.name]) {
+                        cellEvents[slot.name] = [];
+                    }
+                    cellEvents[slot.name].push(event);
+                });
+
+                Object.keys(cellEvents).forEach((slot) => {
+                    const classes = cellEvents[slot];
+                    const interval = classes[0][1];
+
+                    if (!slotColors.has(slot)) {
+                        slotColors.set(slot, generateRandomColor());
+                    }
+
+                    data[weekIdx].events.push({
+                        start: Interval.getString(
+                            interval.startHours,
+                            interval.startMinutes,
+                            Interval.exportOptions
+                        ),
+                        end: Interval.getString(
+                            interval.endHours,
+                            interval.endMinutes,
+                            Interval.exportOptions
+                        ),
+                        text: getEventText(
+                            slot,
+                            (e) => {
+                                setClasses(classes);
+                                setWeekDay(data[weekIdx].name);
+                            },
+                            slotColors.get(slot)!
+                        ),
+                        cellStyles: {
+                            ...defaultEventCellStyles,
+                        },
+                    });
+                });
+            });
+        });
+        return data;
     };
 
-    const handleButtonClick = async () => {
-        await setExpanded(true);
-        const [, , classes] = await algorithmOptions
-            .find((algo) => algo.value === algorithm)
-            ?.algorithm({
-                inputCourses,
-                inputRooms,
-                inputSlots,
-                logFunc: addAlgorithmLogs,
-            })!;
-        dispatch(updateClasses(classes));
+    const getFilterOptionsValues = (data?: Data): Filters => {
+        if (!data) {
+            return {
+                courses: [],
+                rooms: [],
+                faculties: [],
+                slots: [],
+                departments: [],
+                courseTypes: [],
+                lectureTypes: [],
+                campuses: [],
+            };
+        }
+        return {
+            courses: data.courses.map(
+                (course) => `${course.code} - ${course.name}`
+            ),
+            rooms: data.rooms.map((room) => `${room.name}, ${room.campus}`),
+            faculties: data.faculties.map((faculty) => faculty.name),
+            slots: data.slots.map((slot) => slot.name),
+            departments: [
+                ...data.departmentsWithConflicts,
+                ...data.departmentsWithNoConflicts,
+            ],
+            courseTypes: getEnumKeys(CourseType),
+            lectureTypes: getEnumKeys(LectureType),
+            campuses: ["Ahalia", "Nila"],
+        };
+    };
+
+    const handleFiltersChange = (key: string, filterOptions: Filters) => {
+        let resultantClasses: Class[] = cloneDeep(generatedClasses);
+        for (const key of Object.keys(filterOptions)) {
+            const values = filterOptions[key as keyof Filters] as string[];
+            if (values.length === 0) continue;
+            switch (key as keyof Filters) {
+                case "courses": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) =>
+                            values.indexOf(
+                                `${cls.course.code} - ${cls.course.name}`
+                            ) !== -1
+                    );
+                    break;
+                }
+                case "rooms": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) =>
+                            values.indexOf(
+                                `${cls.room!?.name}, ${cls.room!?.campus}`
+                            ) !== -1
+                    );
+                    break;
+                }
+                case "faculties": {
+                    resultantClasses = resultantClasses.filter((cls) => {
+                        let hasFaculty = false;
+                        cls.course.faculties.forEach((faculty) => {
+                            if (values.indexOf(faculty.name) !== -1) {
+                                hasFaculty = true;
+                            }
+                        });
+                        return hasFaculty;
+                    });
+                    break;
+                }
+                case "slots": {
+                    resultantClasses = resultantClasses.filter((cls) => {
+                        let hasSlot = false;
+                        cls.slots.forEach((slot) => {
+                            if (values.indexOf(slot.name) !== -1) {
+                                hasSlot = true;
+                            }
+                        });
+                        return hasSlot;
+                    });
+                    break;
+                }
+                case "departments": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) => values.indexOf(cls.course.department) !== -1
+                    );
+                    break;
+                }
+                case "courseTypes": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) => values.indexOf(cls.course.courseType) !== -1
+                    );
+                    break;
+                }
+                case "lectureTypes": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) => values.indexOf(cls.course.lectureType) !== -1
+                    );
+                    break;
+                }
+                case "campuses": {
+                    resultantClasses = resultantClasses.filter(
+                        (cls) => values.indexOf(cls.room!?.campus) !== -1
+                    );
+                    break;
+                }
+            }
+        }
+        setDisplayedClasses(resultantClasses);
     };
 
     useEffect(() => {
-        bottomRef.current?.scrollTo({
-            top: bottomRef.current?.scrollHeight,
-            behavior: "smooth",
-        });
-    }, [algorithmLogs]);
+        setDisplayedClasses(generatedClasses);
+    }, [generatedClasses]);
 
     return (
-        <Paper
-            sx={{
-                p: 4,
-                height: "auto",
-            }}
-        >
-            <Grid container spacing={3}>
-                <Grid item xs={6}>
-                    <FormControl fullWidth>
-                        <InputLabel id="algorithm">Select Algorithm</InputLabel>
-                        <Select
-                            labelId="algorithm"
-                            id="select-algorithm"
-                            value={algorithm}
-                            label="Select Algorithm"
-                            onChange={handleAlgorithmChange}
-                        >
-                            {algorithmOptions.map((option, optionIdx) => (
-                                <MenuItem value={option.value} key={optionIdx}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={4}>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        startIcon={<ArrowForwardIosRoundedIcon />}
-                        onClick={handleButtonClick}
-                        sx={{
-                            height: 53.5,
-                        }}
-                    >
-                        Generate Timetable
-                    </Button>
-                </Grid>
-                <Grid item xs={12}>
-                    <Accordion
-                        expanded={expanded}
-                        onChange={handleExpandedChange}
-                    >
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="algorithm-logs-content"
-                            id="algorithm-logs"
-                        >
-                            <Typography>Algorithm Logs</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails
-                            sx={{ maxHeight: 400, overflow: "scroll" }}
-                            ref={bottomRef}
-                        >
-                            {algorithmLogs.map((algorithmLog, logIdx) => (
-                                <Typography
-                                    sx={{
-                                        whiteSpace: "pre-wrap",
-                                    }}
-                                    key={logIdx}
-                                >
-                                    {algorithmLog}
-                                </Typography>
-                            ))}
-                        </AccordionDetails>
-                    </Accordion>
-                </Grid>
-                {generatedClasses.length !== 0 && (
-                    <Grid item xs={4}>
-                        <LinkButton
-                            to="/timetable"
-                            buttonText="See Timetable"
-                        />
-                    </Grid>
-                )}
+        <Grid container spacing={4}>
+            <Grid item xs={12}>
+                <TimetableFilters
+                    filterOptionsValues={getFilterOptionsValues(algorithmData)}
+                    handleFiltersChange={handleFiltersChange}
+                />
             </Grid>
-        </Paper>
+            <Grid item xs={12}>
+                <DayTimetable data={getTimetableData(displayedClasses)} />
+            </Grid>
+            <Grid item xs={12}>
+                <SlotDetails classes={classes} weekDay={weekDay as WeekDay} />
+            </Grid>
+        </Grid>
     );
 };
 

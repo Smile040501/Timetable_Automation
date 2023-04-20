@@ -1,3 +1,3 @@
 export { uploadCourses, uploadRooms, uploadSlots } from "./slices/uploadedData";
 
-export { updateClasses } from "./slices/generatedClasses";
+export { updateClasses, updateData } from "./slices/algorithmData";

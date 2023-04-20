@@ -1,8 +1,8 @@
 export default class Interval {
-    private startHours: number;
-    private startMinutes: number;
-    private endHours: number;
-    private endMinutes: number;
+    public startHours: number;
+    public startMinutes: number;
+    public endHours: number;
+    public endMinutes: number;
 
     public static displayOptions: Intl.DateTimeFormatOptions = {
         hour: "2-digit",

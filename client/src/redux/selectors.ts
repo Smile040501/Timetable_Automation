@@ -25,7 +25,14 @@ export const makeSlotsSelector = () => {
 
 export const makeClassesSelector = () => {
     return createSelector(
-        (state: RootState) => state.generatedClasses.classes,
+        (state: RootState) => state.algorithmData.classes,
         (classes) => classes
+    );
+};
+
+export const makeDataSelector = () => {
+    return createSelector(
+        (state: RootState) => state.algorithmData.data,
+        (data) => data
     );
 };

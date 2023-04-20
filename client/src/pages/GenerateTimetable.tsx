@@ -23,7 +23,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import executeRandomizedGeneticAlgo from "../algorithms/genetic_algo1";
 import executeGreedyGeneticAlgo from "../algorithms/genetic_algo2";
 import executeSimulatedAnnealing from "../algorithms/simulatedAnnealing";
-import { updateClasses } from "../redux/actions";
+import { updateClasses, updateData } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
     makeCoursesSelector,
@@ -31,6 +31,7 @@ import {
     makeSlotsSelector,
     makeClassesSelector,
 } from "../redux/selectors";
+import { AlgorithmConfigData } from "../interfaces";
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -115,6 +116,18 @@ const algorithmOptions = [
     },
 ];
 
+const defaultAlgorithmConfig: AlgorithmConfigData = {
+    VERBOSE: process.env.NODE_ENV === "development",
+    RANDOM_DATA: true,
+    UPPER_BOUND: 10000,
+    MIN_NUM_FACULTY: 2,
+    NUM_PME: 0,
+    EXPANDED_SLOTS: false,
+    inputCourses: [],
+    inputRooms: [],
+    inputSlots: [],
+};
+
 const GenerateTimetable: React.FC = () => {
     const dispatch = useAppDispatch();
 
@@ -157,15 +170,17 @@ const GenerateTimetable: React.FC = () => {
 
     const handleButtonClick = async () => {
         await setExpanded(true);
-        const [, , classes] = await algorithmOptions
+        const [data, , classes] = await algorithmOptions
             .find((algo) => algo.value === algorithm)
             ?.algorithm({
+                ...defaultAlgorithmConfig,
                 inputCourses,
                 inputRooms,
                 inputSlots,
                 logFunc: addAlgorithmLogs,
             })!;
         dispatch(updateClasses(classes));
+        dispatch(updateData(data));
     };
 
     useEffect(() => {

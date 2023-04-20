@@ -38,3 +38,14 @@ export interface AlgorithmConfigData {
     inputSlots?: SlotAsJSON[];
     logFunc?: (log: any) => void;
 }
+
+export interface Filters {
+    courses: string[];
+    rooms: string[];
+    faculties: string[];
+    slots: string[];
+    departments: string[];
+    courseTypes: string[];
+    lectureTypes: string[];
+    campuses: string[];
+}

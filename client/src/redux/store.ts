@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import uploadedDataReducer from "./slices/uploadedData";
-import generatedClassesReducer from "./slices/generatedClasses";
+import algorithmDataReducer from "./slices/algorithmData";
 
 export const store = configureStore({
     reducer: {
         uploadedData: uploadedDataReducer,
-        generatedClasses: generatedClassesReducer,
+        algorithmData: algorithmDataReducer,
     },
     devTools: process.env.NODE_ENV !== "production",
     middleware: (getDefaultMiddleware) =>
