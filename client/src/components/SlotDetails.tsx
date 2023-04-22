@@ -7,8 +7,8 @@ import Typography from "@mui/material/Typography";
 
 import Class from "../algorithms/models/class";
 import Slot from "../algorithms/models/slot";
-import Interval from "../algorithms/utils/interval";
-import { WeekDay } from "../algorithms/utils/enums";
+import Interval from "../algorithms/models/interval";
+import { WeekDay } from "../utils/enums";
 
 const SlotDetails: React.FC<{
     classes: [Class, Interval, Slot][];

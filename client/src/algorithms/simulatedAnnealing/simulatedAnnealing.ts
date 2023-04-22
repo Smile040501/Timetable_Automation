@@ -5,7 +5,7 @@ import sampleSize from "lodash/sampleSize";
 
 import Class from "../models/class";
 import Data from "../models/data";
-import { ConflictType, CourseType } from "../utils/enums";
+import { ConflictType, CourseType } from "../../utils/enums";
 
 export default class SimulatedAnnealing {
     HARD_CONSTRAINT_MULTIPLIER = 100000; // TODO

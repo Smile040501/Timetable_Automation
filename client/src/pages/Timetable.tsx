@@ -15,9 +15,9 @@ import TimetableFilters from "../components/TimetableFilters";
 import Class from "../algorithms/models/class";
 import Data from "../algorithms/models/data";
 import Slot from "../algorithms/models/slot";
-import Interval from "../algorithms/utils/interval";
-import { CourseType, LectureType, WeekDay } from "../algorithms/utils/enums";
-import { getEnumKeys } from "../algorithms/utils/utils";
+import Interval from "../algorithms/models/interval";
+import { CourseType, LectureType, WeekDay } from "../utils/enums";
+import { getEnumKeys } from "../utils/utils";
 
 import { useAppSelector } from "../redux/hooks";
 import { makeClassesSelector, makeDataSelector } from "../redux/selectors";

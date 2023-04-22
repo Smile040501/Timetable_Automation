@@ -14,8 +14,8 @@ import {
     CourseType,
     Departments,
     LectureType,
-} from "../utils/enums";
-import Interval from "../utils/interval";
+} from "../../utils/enums";
+import Interval from "../models/interval";
 
 // A Single Chromosome
 export default class Schedule implements ISchedule {

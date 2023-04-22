@@ -1,5 +1,5 @@
 import Room from "../../models/room";
-import { LectureType } from "../../utils/enums";
+import { LectureType } from "../../../utils/enums";
 import { RoomAsJSON } from "../../../utils/interfaces";
 
 const roomsAsTXT = [

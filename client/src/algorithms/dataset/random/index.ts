@@ -8,9 +8,9 @@ import {
     Departments,
     LectureType,
     WeekDay,
-} from "../../utils/enums";
-import Interval from "../../utils/interval";
-import { expandObject, getBiasedArray } from "../../utils/utils";
+} from "../../../utils/enums";
+import Interval from "../../models/interval";
+import { expandObject, getBiasedArray } from "../../../utils/utils";
 
 export type DepartmentDist = {
     [prop: string]: {

@@ -1,9 +1,9 @@
 import Class from "../models/class";
 import Data from "../models/data";
 import executeRandomGeneticAlgo from "../genetic_algo1";
-import { logBestScheduleResults } from "../utils/utils";
+import { logBestScheduleResults } from "../../utils/utils";
 import SimulatedAnnealing from "./simulatedAnnealing";
-import Logger from "../utils/logger";
+import Logger from "../models/logger";
 import { AlgorithmConfigData } from "../../utils/interfaces";
 
 const execute = async (configData?: AlgorithmConfigData) => {

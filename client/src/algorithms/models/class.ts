@@ -12,9 +12,9 @@ import {
     Departments,
     LectureType,
     WeekDay,
-} from "../utils/enums";
-import Interval from "../utils/interval";
-import { getEnumKeys } from "../utils/utils";
+} from "../../utils/enums";
+import Interval from "./interval";
+import { getEnumKeys } from "../../utils/utils";
 
 // Gene for a Chromosome
 export default class Class {

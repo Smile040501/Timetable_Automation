@@ -2,8 +2,8 @@ import Class from "../models/class";
 import Data from "../models/data";
 import Schedule from "./schedule";
 import GeneticAlgorithm from "./geneticAlgorithm";
-import Logger from "../utils/logger";
-import { logBestScheduleResults, logVerboseData } from "../utils/utils";
+import Logger from "../models/logger";
+import { logBestScheduleResults, logVerboseData } from "../../utils/utils";
 import { AlgorithmConfigData } from "../../utils/interfaces";
 
 const execute = async (configData?: AlgorithmConfigData) => {

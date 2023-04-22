@@ -1,5 +1,5 @@
-import { WeekDay } from "../utils/enums";
-import Interval from "../utils/interval";
+import { WeekDay } from "../../utils/enums";
+import Interval from "./interval";
 
 export default class Slot {
     public credits: number = 0;

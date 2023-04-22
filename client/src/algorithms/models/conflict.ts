@@ -1,5 +1,5 @@
 import Class from "./class";
-import { ConflictType } from "../utils/enums";
+import { ConflictType } from "../../utils/enums";
 
 export default class Conflict {
     constructor(

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import Grid from "@mui/material/Grid";
 
-import Interval from "../algorithms/utils/interval";
+import Interval from "../algorithms/models/interval";
 import JSONTable from "../components/JSONTable";
 import UploadJSON from "../components/UploadJSON";
 import { uploadSlots } from "../redux/actions";

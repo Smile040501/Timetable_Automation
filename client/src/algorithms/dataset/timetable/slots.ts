@@ -1,6 +1,6 @@
 import Slot from "../../models/slot";
-import { LectureType, WeekDay } from "../../utils/enums";
-import Interval from "../../utils/interval";
+import { LectureType, WeekDay } from "../../../utils/enums";
+import Interval from "../../models/interval";
 import { SlotAsJSON } from "../../../utils/interfaces";
 
 export const generateSlots = (slotsAsJSON: SlotAsJSON[] = []) =>

@@ -1,13 +1,13 @@
 import { table } from "table";
 
-import Class from "../models/class";
-import Conflict from "../models/conflict";
-import Data from "../models/data";
-import Slot from "../models/slot";
-import Population from "../models/population";
-import { ConflictType, WeekDay } from "./enums";
+import Class from "./class";
+import Conflict from "./conflict";
+import Data from "./data";
+import Slot from "./slot";
+import Population from "./population";
+import { ConflictType, WeekDay } from "../../utils/enums";
 import Interval from "./interval";
-import { getEnumKeys } from "./utils";
+import { getEnumKeys } from "../../utils/utils";
 
 export default class Logger {
     static logAllData = (data: Data) => {
