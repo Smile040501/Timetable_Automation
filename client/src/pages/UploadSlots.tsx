@@ -8,7 +8,7 @@ import UploadJSON from "../components/UploadJSON";
 import { uploadSlots } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeSlotsSelector } from "../redux/selectors";
-import { SlotAsJSON, StringifiedValues } from "../interfaces";
+import { SlotAsJSON, StringifiedValues } from "../utils/interfaces";
 
 const UploadSlots: React.FC = () => {
     const dispatch = useAppDispatch();

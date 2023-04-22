@@ -17,7 +17,7 @@ import Typography from "@mui/material/Typography";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Filters } from "../interfaces";
+import { Filters } from "../utils/interfaces";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

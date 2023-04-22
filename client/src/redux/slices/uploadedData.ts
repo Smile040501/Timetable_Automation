@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../interfaces";
+import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../utils/interfaces";
 
 export interface UploadedDataState {
     courses: CourseAsJSON[];

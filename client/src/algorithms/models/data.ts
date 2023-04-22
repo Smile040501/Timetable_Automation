@@ -19,7 +19,7 @@ import {
     generateCourses,
     generateSlots,
 } from "../dataset/timetable";
-import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../interfaces";
+import { CourseAsJSON, RoomAsJSON, SlotAsJSON } from "../../utils/interfaces";
 
 export default class Data {
     public departmentDist: DepartmentDist | undefined;

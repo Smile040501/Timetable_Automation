@@ -1,7 +1,7 @@
 import Course from "../../models/course";
 import Faculty from "../../models/faculty";
 import { roomCapacities } from "./rooms";
-import { CourseAsJSON } from "../../../interfaces";
+import { CourseAsJSON } from "../../../utils/interfaces";
 
 const coursesAsTXT = [
     "PHY1 | Physics | COMMON | Normal | GENERAL | 2-1-0-3 | Soham Manni-Bibhu Sarangi-Moumita Nandy",

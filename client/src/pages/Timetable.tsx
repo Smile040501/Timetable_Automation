@@ -3,9 +3,12 @@ import { SxProps } from "@mui/material/styles";
 import cloneDeep from "lodash/cloneDeep";
 
 import Button from "@mui/material/Button";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 
 import DayTimetable, { DayTimetableData } from "../components/DayTimetable";
+import IOSSwitch from "../components/IOSSwitch";
 import SlotDetails from "../components/SlotDetails";
 import TimetableFilters from "../components/TimetableFilters";
 
@@ -18,133 +21,8 @@ import { getEnumKeys } from "../algorithms/utils/utils";
 
 import { useAppSelector } from "../redux/hooks";
 import { makeClassesSelector, makeDataSelector } from "../redux/selectors";
-import { Filters } from "../interfaces";
-
-// const times: DayTimetableData[] = [
-//     {
-//         name: "Monday",
-//         events: [
-//             {
-//                 start: "08:00",
-//                 end: "08:50",
-//                 text: getEventText(
-//                     <div>
-//                         <h3>Doctor Appointment</h3>
-//                         <b>Dr. Nick</b>
-//                         <br />
-//                         1-800-DOCTORB
-//                         <br />
-//                         The 'B' is for bargain!
-//                     </div>,
-//                     (e) => console.log("Hi")
-//                 ),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//             {
-//                 start: "08:10",
-//                 end: "09:00",
-//                 text: getEventText("Arrow", (e) => console.log("Hi")),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//             {
-//                 start: "09:45",
-//                 end: "10:30",
-//                 text: getEventText("Hi", (e) => console.log("Hi")),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//             {
-//                 start: "09:00",
-//                 end: "15:30",
-//                 text: getEventText("Hi", (e) => console.log("Hi")),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//         ],
-//     },
-//     {
-//         name: "Tuesday",
-//         events: [
-//             {
-//                 start: "08:20",
-//                 end: "08:45",
-//                 text: getEventText("Meet with my lawyers.", (e) =>
-//                     console.log("Hi")
-//                 ),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//         ],
-//     },
-//     {
-//         name: "Wednesday",
-//         events: [
-//             {
-//                 start: "09:00",
-//                 end: "09:30",
-//                 text: getEventText(
-//                     "I am doing something from 4:30-5:30pm on this date.",
-//                     (e) => console.log("Hi")
-//                 ),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                     whiteSpace: "normal",
-//                     wordWrap: "break-word",
-//                 },
-//             },
-//             {
-//                 start: "09:15",
-//                 end: "11:45",
-//                 text: getEventText(
-//                     "Goodbye … I never thought it would come to this. But here we are.",
-//                     (e) => console.log("Hi")
-//                 ),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//         ],
-//     },
-//     {
-//         name: "Thursday",
-//         events: [
-//             {
-//                 start: "15:00",
-//                 end: "16:00",
-//                 text: getEventText("Another thing.", (e) => console.log("Hi")),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//         ],
-//     },
-//     {
-//         name: "Friday",
-//         events: [
-//             {
-//                 start: "08:00",
-//                 end: "09:00",
-//                 text: getEventText("Another thing.", (e) => console.log("Hi")),
-//                 cellStyles: {
-//                     ...defaultEventCellStyles,
-//                 },
-//             },
-//         ],
-//     },
-// ];
-
-const generateRandomColor = () => {
-    const hex = Math.floor(Math.random() * 0xffffff);
-    const color = "#" + hex.toString(16);
-    return color;
-};
+import { Filters } from "../utils/interfaces";
+import { generateRandomColor } from "../utils/utils";
 
 const Timetable: React.FC = () => {
     const [classes, setClasses] = useState<[Class, Interval, Slot][]>([]);
@@ -152,11 +30,30 @@ const Timetable: React.FC = () => {
     const [weekDay, setWeekDay] = useState("");
     const [slotColors] = useState(new Map<string, string>());
 
+    const [switchState, setSwitchState] = useState({
+        collapseTimes: false,
+        compactTimes: true,
+        verticalDays: true,
+    });
+
     const generatedClassesSelector = useMemo(makeClassesSelector, []);
     const algorithmDataSelector = useMemo(makeDataSelector, []);
 
     const generatedClasses = useAppSelector(generatedClassesSelector);
     const algorithmData = useAppSelector(algorithmDataSelector);
+
+    useEffect(() => {
+        setDisplayedClasses(generatedClasses);
+    }, [generatedClasses]);
+
+    const handleSwitchChange =
+        (key: "compactTimes" | "collapseTimes" | "verticalDays") =>
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            setSwitchState((prevState) => ({
+                ...prevState,
+                [key]: event.target.checked,
+            }));
+        };
 
     const defaultEventCellStyles: SxProps = {
         height: 0,
@@ -179,6 +76,7 @@ const Timetable: React.FC = () => {
                             backgroundColor: color,
                         },
                         fontSize: 20,
+                        borderRadius: 0,
                     }}
                     variant="contained"
                     onClick={onClickHandler}
@@ -277,7 +175,7 @@ const Timetable: React.FC = () => {
             ],
             courseTypes: getEnumKeys(CourseType),
             lectureTypes: getEnumKeys(LectureType),
-            campuses: ["Ahalia", "Nila"],
+            campuses: [...new Set(data.rooms.map((room) => room.campus))],
         };
     };
 
@@ -358,9 +256,48 @@ const Timetable: React.FC = () => {
         setDisplayedClasses(resultantClasses);
     };
 
-    useEffect(() => {
-        setDisplayedClasses(generatedClasses);
-    }, [generatedClasses]);
+    const getCaption = () => (
+        <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+            <Grid container spacing={5}>
+                <Grid item>
+                    <FormControlLabel
+                        control={
+                            <IOSSwitch
+                                sx={{ mx: 1 }}
+                                checked={switchState.verticalDays}
+                                onChange={handleSwitchChange("verticalDays")}
+                            />
+                        }
+                        label="Vertical Days"
+                    />
+                </Grid>
+                <Grid item>
+                    <FormControlLabel
+                        control={
+                            <IOSSwitch
+                                sx={{ mx: 1 }}
+                                checked={switchState.compactTimes}
+                                onChange={handleSwitchChange("compactTimes")}
+                            />
+                        }
+                        label="Compact Times Headers"
+                    />
+                </Grid>
+                <Grid item>
+                    <FormControlLabel
+                        control={
+                            <IOSSwitch
+                                sx={{ mx: 1 }}
+                                checked={switchState.collapseTimes}
+                                onChange={handleSwitchChange("collapseTimes")}
+                            />
+                        }
+                        label="Collapse Times Headers"
+                    />
+                </Grid>
+            </Grid>
+        </FormGroup>
+    );
 
     return (
         <Grid container spacing={4}>
@@ -371,7 +308,13 @@ const Timetable: React.FC = () => {
                 />
             </Grid>
             <Grid item xs={12}>
-                <DayTimetable data={getTimetableData(displayedClasses)} />
+                <DayTimetable
+                    data={getTimetableData(displayedClasses)}
+                    caption={getCaption()}
+                    displayVerticalDays={switchState.verticalDays}
+                    useDataTimes={switchState.compactTimes}
+                    collapseTimesColumn={switchState.collapseTimes}
+                />
             </Grid>
             <Grid item xs={12}>
                 <SlotDetails classes={classes} weekDay={weekDay as WeekDay} />
@@ -381,3 +324,160 @@ const Timetable: React.FC = () => {
 };
 
 export default Timetable;
+
+// const sampleEvents: DayTimetableData[] = [
+//     {
+//         name: "Monday",
+//         events: [
+//             {
+//                 start: "08:00",
+//                 end: "16:00",
+//                 text: getEventText(
+//                     <div>
+//                         <h3>Doctor Appointment</h3>
+//                         <b>Dr. Nick</b>
+//                         <br />
+//                         1-800-DOCTORB
+//                         <br />
+//                         The 'B' is for bargain!
+//                     </div>,
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "08:10",
+//                 end: "09:10",
+//                 text: getEventText(
+//                     "Arrow",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "09:45",
+//                 end: "10:30",
+//                 text: getEventText(
+//                     "Hi",
+//                     (e) => console.log("Hi2"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "08:05",
+//                 end: "08:45",
+//                 text: getEventText(
+//                     "Hi2",
+//                     (e) => console.log("Hi3"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//             {
+//                 start: "09:10",
+//                 end: "15:30",
+//                 text: getEventText(
+//                     "Hi3",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Tuesday",
+//         events: [
+//             {
+//                 start: "08:20",
+//                 end: "08:45",
+//                 text: getEventText(
+//                     "Meet with my lawyers.",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Wednesday",
+//         events: [
+//             {
+//                 start: "09:00",
+//                 end: "09:30",
+//                 text: getEventText(
+//                     "I am doing something from 4:30-5:30pm on this date.",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                     whiteSpace: "normal",
+//                     wordWrap: "break-word",
+//                 },
+//             },
+//             {
+//                 start: "09:15",
+//                 end: "11:45",
+//                 text: getEventText(
+//                     "Goodbye … I never thought it would come to this. But here we are.",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Thursday",
+//         events: [
+//             {
+//                 start: "15:00",
+//                 end: "16:00",
+//                 text: getEventText(
+//                     "Another thing.",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+//     {
+//         name: "Friday",
+//         events: [
+//             {
+//                 start: "08:00",
+//                 end: "09:00",
+//                 text: getEventText(
+//                     "Another thing.",
+//                     (e) => console.log("Hi"),
+//                     generateRandomColor()
+//                 ),
+//                 cellStyles: {
+//                     ...defaultEventCellStyles,
+//                 },
+//             },
+//         ],
+//     },
+// ];

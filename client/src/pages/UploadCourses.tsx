@@ -7,7 +7,7 @@ import UploadJSON from "../components/UploadJSON";
 import { uploadCourses } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeCoursesSelector } from "../redux/selectors";
-import { CourseAsJSON, StringifiedValues } from "../interfaces";
+import { CourseAsJSON, StringifiedValues } from "../utils/interfaces";
 
 const UploadCourses: React.FC = () => {
     const dispatch = useAppDispatch();

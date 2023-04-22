@@ -31,7 +31,7 @@ import {
     makeSlotsSelector,
     makeClassesSelector,
 } from "../redux/selectors";
-import { AlgorithmConfigData } from "../interfaces";
+import { AlgorithmConfigData } from "../utils/interfaces";
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />

@@ -4,7 +4,7 @@ import executeRandomGeneticAlgo from "../genetic_algo1";
 import { logBestScheduleResults } from "../utils/utils";
 import SimulatedAnnealing from "./simulatedAnnealing";
 import Logger from "../utils/logger";
-import { AlgorithmConfigData } from "../../interfaces";
+import { AlgorithmConfigData } from "../../utils/interfaces";
 
 const execute = async (configData?: AlgorithmConfigData) => {
     const [data, logger, bestScheduleClasses] = await executeRandomGeneticAlgo(

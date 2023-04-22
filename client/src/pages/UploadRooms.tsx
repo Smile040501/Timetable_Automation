@@ -7,7 +7,7 @@ import UploadJSON from "../components/UploadJSON";
 import { uploadRooms } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeRoomsSelector } from "../redux/selectors";
-import { RoomAsJSON, StringifiedValues } from "../interfaces";
+import { RoomAsJSON, StringifiedValues } from "../utils/interfaces";
 
 const UploadRooms: React.FC = () => {
     const dispatch = useAppDispatch();

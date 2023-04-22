@@ -12,7 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
 
-import type { StringifiedValues } from "../interfaces";
+import type { StringifiedValues } from "../utils/interfaces";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {

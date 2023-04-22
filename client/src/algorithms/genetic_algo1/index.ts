@@ -4,7 +4,7 @@ import Schedule from "./schedule";
 import GeneticAlgorithm from "./geneticAlgorithm";
 import Logger from "../utils/logger";
 import { logBestScheduleResults, logVerboseData } from "../utils/utils";
-import { AlgorithmConfigData } from "../../interfaces";
+import { AlgorithmConfigData } from "../../utils/interfaces";
 
 const generatePlotData = (
     numPlotPoints: number,
