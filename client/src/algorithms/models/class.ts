@@ -22,13 +22,13 @@ export default class Class {
         public id: number,
         public course: Course,
         public slots: Slot[] = [],
-        public room?: Room
+        public rooms: Room[] = []
     ) {}
 
     toString = () => {
-        return `<${this.course.code},${
-            this.room ? this.room.name : ""
-        },[${this.slots.map((slot) => slot.name).join(",")}]>`;
+        return `<${this.course.code},${[...new Set(this.rooms)]
+            .map((room) => room.name)
+            .join(",")},[${this.slots.map((slot) => slot.name).join(",")}]>`;
     };
 
     // If two classes overlap as per their allotted slots
@@ -37,6 +37,22 @@ export default class Class {
         cls1.slots.forEach((s1) => {
             cls2.slots.forEach((s2) => {
                 if (Slot.isOverlapping(s1, s2)) {
+                    ans = true;
+                }
+            });
+        });
+        return ans;
+    };
+
+    // If two classes overlap as per their allotted slots and rooms
+    static isOverlappingRoomWise = (cls1: Class, cls2: Class) => {
+        let ans = false;
+        cls1.slots.forEach((s1, idx1) => {
+            cls2.slots.forEach((s2, idx2) => {
+                if (
+                    Slot.isOverlapping(s1, s2) &&
+                    cls1.rooms[idx1] === cls2.rooms[idx2]
+                ) {
                     ans = true;
                 }
             });
@@ -98,7 +114,10 @@ export default class Class {
                     break;
                 }
 
-                cls.room = room;
+                cls.rooms = Array.from(
+                    { length: cls.slots.length },
+                    (_, i) => room
+                );
                 const conflicts = Class.hasConflicts(
                     cls,
                     allocatedClasses,
@@ -151,24 +170,32 @@ export default class Class {
     };
 
     static hasRoomCapacityConflict = (cls: Class) => {
-        if (
-            cls.course.needsSlot &&
-            cls.room!.capacity < cls.course.maxNumberOfStudents
-        ) {
-            return [new Conflict(ConflictType.RoomCapacity, [cls])];
+        const roomCapacityConflicts: Conflict[] = [];
+        if (cls.course.needsSlot) {
+            cls.rooms.forEach((room) => {
+                if (room.capacity < cls.course.maxNumberOfStudents) {
+                    roomCapacityConflicts.push(
+                        new Conflict(ConflictType.RoomCapacity, [cls])
+                    );
+                }
+            });
         }
-        return [];
+        return roomCapacityConflicts;
     };
 
     static hasRoomFeatureConflict = (cls: Class) => {
+        const roomFeatureConflicts: Conflict[] = [];
         if (
             cls.course.needsSlot &&
-            cls.course.lectureType === LectureType.Lab &&
-            cls.room!.lectureType !== LectureType.Lab
+            cls.course.lectureType === LectureType.Lab
         ) {
-            return [new Conflict(ConflictType.RoomFeature, [cls])];
+            cls.rooms.forEach((room) => {
+                if (room.lectureType !== LectureType.Lab) {
+                    return [new Conflict(ConflictType.RoomFeature, [cls])];
+                }
+            });
         }
-        return [];
+        return roomFeatureConflicts;
     };
 
     static hasInstructorBookingConflict = (cls: Class, classes: Class[]) => {
@@ -236,9 +263,8 @@ export default class Class {
                 cls.id !== cls2.id &&
                 cls.course.needsSlot &&
                 cls2.course.needsSlot &&
-                Class.isOverlapping(cls, cls2) &&
                 // Room Booking Conflict
-                cls.room === cls2.room
+                Class.isOverlappingRoomWise(cls, cls2)
             ) {
                 conflicts.push(
                     new Conflict(ConflictType.RoomBooking, [cls, cls2])
@@ -257,17 +283,20 @@ export default class Class {
             const sch = [...map.entries()];
             let previousClasses: Class[] = [];
             let previousInterval: Interval = new Interval("08:00", "08:50");
+            let previousSlots: Slot[] = [];
             for (let i = 0; i < sch.length; ++i) {
                 const classes = sch[i][1].map((cis) => cis[0]);
                 if (classes.length === 0) {
                     continue;
                 }
                 const interval = sch[i][1][0][1];
+                const slots = sch[i][1].map((cis) => cis[2]);
 
                 // Initial
                 if (previousClasses.length === 0) {
                     previousClasses = classes;
                     previousInterval = interval;
+                    previousSlots = slots;
                     continue;
                 }
 
@@ -276,12 +305,29 @@ export default class Class {
 
                 for (const cls1 of previousClasses) {
                     for (const cls2 of classes) {
+                        let slot1Idx = -1,
+                            slot2Idx = -1;
+                        previousSlots.forEach((slot) => {
+                            const idx = cls1.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot1Idx = idx;
+                            }
+                        });
+                        slots.forEach((slot) => {
+                            const idx = cls2.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot2Idx = idx;
+                            }
+                        });
+                        const room1 = cls1.rooms[slot1Idx];
+                        const room2 = cls2.rooms[slot2Idx];
+
                         // Both require slots
                         if (
                             cls1.course.needsSlot &&
                             cls2.course.needsSlot &&
                             // Both have different campus
-                            cls1.room!.campus !== cls2.room!.campus &&
+                            room1.campus !== room2.campus &&
                             // Both have common faculties
                             intersection(
                                 cls1.course.faculties,
@@ -296,6 +342,7 @@ export default class Class {
 
                 previousClasses = classes;
                 previousInterval = interval;
+                previousSlots = slots;
 
                 // At least 1 hour for faculty
                 if (gap < 60 && haveCommonFaculty) {
@@ -322,17 +369,20 @@ export default class Class {
             const sch = [...map.entries()];
             let previousClasses: Class[] = [];
             let previousInterval: Interval = new Interval();
+            let previousSlots: Slot[] = [];
             for (let i = 0; i < sch.length; ++i) {
                 const classes = sch[i][1].map((cis) => cis[0]);
                 if (classes.length === 0) {
                     continue;
                 }
                 const interval = sch[i][1][0][1];
+                const slots = sch[i][1].map((cis) => cis[2]);
 
                 // Initial
                 if (previousClasses.length === 0) {
                     previousClasses = classes;
                     previousInterval = interval;
+                    previousSlots = slots;
                     continue;
                 }
 
@@ -341,12 +391,29 @@ export default class Class {
 
                 for (const cls1 of previousClasses) {
                     for (const cls2 of classes) {
+                        let slot1Idx = -1,
+                            slot2Idx = -1;
+                        previousSlots.forEach((slot) => {
+                            const idx = cls1.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot1Idx = idx;
+                            }
+                        });
+                        slots.forEach((slot) => {
+                            const idx = cls2.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot2Idx = idx;
+                            }
+                        });
+                        const room1 = cls1.rooms[slot1Idx];
+                        const room2 = cls2.rooms[slot2Idx];
+
                         // Both require slots
                         if (
                             cls1.course.needsSlot &&
                             cls2.course.needsSlot &&
                             // Both have different campus
-                            cls1.room!.campus !== cls2.room!.campus &&
+                            room1.campus !== room2.campus &&
                             // Both have same department and are in conflicting departments
                             cls1.course.department === cls2.course.department &&
                             data.departmentsWithConflicts.indexOf(
@@ -361,6 +428,7 @@ export default class Class {
 
                 previousClasses = classes;
                 previousInterval = interval;
+                previousSlots = slots;
 
                 // At least 1 hour for faculty
                 if (gap < 60 && haveCommonStudents) {
@@ -490,7 +558,7 @@ export default class Class {
         const roomMapping: Map<Room, Class[]> = new Map();
         data.rooms.forEach((room) => {
             classes.forEach((cls) => {
-                if (cls.room === room) {
+                if (cls.rooms.indexOf(room) !== -1) {
                     if (!roomMapping.has(room)) {
                         roomMapping.set(room, []);
                     }

@@ -195,12 +195,19 @@ const Timetable: React.FC = () => {
                     break;
                 }
                 case "rooms": {
-                    resultantClasses = resultantClasses.filter(
-                        (cls) =>
-                            values.indexOf(
-                                `${cls.room!?.name}, ${cls.room!?.campus}`
-                            ) !== -1
-                    );
+                    resultantClasses = resultantClasses.filter((cls) => {
+                        let hasRoom = false;
+                        cls.rooms.forEach((room) => {
+                            if (
+                                values.indexOf(
+                                    `${room.name}, ${room.campus}`
+                                ) !== -1
+                            ) {
+                                hasRoom = true;
+                            }
+                        });
+                        return hasRoom;
+                    });
                     break;
                 }
                 case "faculties": {
@@ -246,9 +253,15 @@ const Timetable: React.FC = () => {
                     break;
                 }
                 case "campuses": {
-                    resultantClasses = resultantClasses.filter(
-                        (cls) => values.indexOf(cls.room!?.campus) !== -1
-                    );
+                    resultantClasses = resultantClasses.filter((cls) => {
+                        let hasCampus = false;
+                        cls.rooms.forEach((room) => {
+                            if (values.indexOf(room.campus) !== -1) {
+                                hasCampus = true;
+                            }
+                        });
+                        return hasCampus;
+                    });
                     break;
                 }
             }

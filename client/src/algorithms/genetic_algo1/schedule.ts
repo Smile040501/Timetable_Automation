@@ -56,7 +56,11 @@ export default class Schedule implements ISchedule {
             // For lab course, only a lab room
             // For normal course, both lab and normal room are fine
             const eligibleRooms = Class.getEligibleRooms(newClass, this.data);
-            newClass.room = eligibleRooms[random(0, eligibleRooms.length - 1)];
+            const room = eligibleRooms[random(0, eligibleRooms.length - 1)];
+            newClass.rooms = Array.from(
+                { length: newClass.slots.length },
+                (_, i) => room
+            );
         });
 
         return this;
@@ -106,24 +110,30 @@ export default class Schedule implements ISchedule {
 
             // Seating Capacity Conflict
             // Should never happen coz of the way we initialize
-            if (cls1.room!.capacity < cls1.course.maxNumberOfStudents) {
-                this.conflicts.push(
-                    new Conflict(ConflictType.RoomCapacity, [cls1])
-                );
-            }
+            cls1.rooms.forEach((room) => {
+                if (room.capacity < cls1.course.maxNumberOfStudents) {
+                    this.conflicts.push(
+                        new Conflict(ConflictType.RoomCapacity, [cls1])
+                    );
+                }
+            });
 
             // Room Feature Conflict
             if (cls1.course.lectureType === LectureType.Lab) {
-                if (cls1.room!.lectureType !== LectureType.Lab) {
-                    this.conflicts.push(
-                        new Conflict(ConflictType.RoomFeature, [cls1])
-                    );
-                }
+                cls1.rooms.forEach((room) => {
+                    if (room.lectureType !== LectureType.Lab) {
+                        this.conflicts.push(
+                            new Conflict(ConflictType.RoomFeature, [cls1])
+                        );
+                    }
+                });
             } else {
                 // Lose 5% fitness if a normal course is assigned a lab room
-                if (cls1.room!.lectureType === LectureType.Lab) {
-                    fitnessMultipliers.push(0.95);
-                }
+                // for (const room of cls1.rooms) {
+                //     if (room.lectureType === LectureType.Lab) {
+                //         fitnessMultipliers.push(0.95);
+                //     }
+                // }
             }
 
             for (let j = i + 1; j < this.classes.length; ++j) {
@@ -182,13 +192,16 @@ export default class Schedule implements ISchedule {
                             fitnessMultipliers.push(1.5);
                         }
                     }
+                }
 
-                    // Same Room Booking Conflict
-                    if (cls1.room === cls2.room) {
-                        this.conflicts.push(
-                            new Conflict(ConflictType.RoomBooking, [cls1, cls2])
-                        );
-                    }
+                // Same Room Booking Conflict
+                if (
+                    cls1.id !== cls2.id &&
+                    Class.isOverlappingRoomWise(cls1, cls2)
+                ) {
+                    this.conflicts.push(
+                        new Conflict(ConflictType.RoomBooking, [cls1, cls2])
+                    );
                 }
             }
         }
@@ -200,15 +213,19 @@ export default class Schedule implements ISchedule {
             const sch = [...map.entries()];
             let previousClasses: Class[] = [];
             let previousInterval: Interval = new Interval("08:00", "08:50");
+            let previousSlots: Slot[] = [];
             for (let i = 0; i < sch.length; ++i) {
                 const classes = sch[i][1].map((cis) => cis[0]);
                 if (classes.length === 0) {
                     continue;
                 }
                 const interval = sch[i][1][0][1];
+                const slots = sch[i][1].map((cis) => cis[2]);
+
                 if (previousClasses.length === 0) {
                     previousClasses = classes;
                     previousInterval = interval;
+                    previousSlots = slots;
                     continue;
                 }
 
@@ -218,12 +235,29 @@ export default class Schedule implements ISchedule {
 
                 for (const cls1 of previousClasses) {
                     for (const cls2 of classes) {
+                        let slot1Idx = -1,
+                            slot2Idx = -1;
+                        previousSlots.forEach((slot) => {
+                            const idx = cls1.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot1Idx = idx;
+                            }
+                        });
+                        slots.forEach((slot) => {
+                            const idx = cls2.slots.indexOf(slot);
+                            if (idx !== -1) {
+                                slot2Idx = idx;
+                            }
+                        });
+                        const room1 = cls1.rooms[slot1Idx];
+                        const room2 = cls2.rooms[slot2Idx];
+
                         // Both require slots
                         if (
                             cls1.course.needsSlot &&
                             cls2.course.needsSlot &&
                             // Both have different campus
-                            cls1.room!.campus !== cls2.room!.campus
+                            room1.campus !== room2.campus
                         ) {
                             // Both have common faculties
                             if (
@@ -252,6 +286,7 @@ export default class Schedule implements ISchedule {
 
                 previousClasses = classes;
                 previousInterval = interval;
+                previousSlots = slots;
 
                 // At least 1 hour for faculty and student travel
                 if (gap < 60 && (haveCommonFaculty || haveCommonStudent)) {

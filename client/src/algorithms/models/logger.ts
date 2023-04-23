@@ -122,7 +122,9 @@ export default class Logger {
             sch.push([
                 `CLS${cls.id}`,
                 cls.course.toString(),
-                cls.room ? cls.room.toString() : "",
+                cls.rooms
+                    .map((room) => `(${room.name}, ${room.campus})`)
+                    .join("\n"),
                 cls.slots
                     .map((slot) => `(${slot.name}, ${slot.credits})`)
                     .join("\n"),
@@ -143,7 +145,7 @@ export default class Logger {
             const classStr = classes.map(
                 (cls) =>
                     `<${cls.course.code},${cls.course.department},${
-                        cls.room ? cls.room.name : ""
+                        cls.rooms[cls.slots.indexOf(slot)].name
                     },[${cls.course.faculties.join(",")}]>`
             );
             sch.push([slot!.toString(false), Logger.getCSVString(classStr, 4)]);
@@ -189,7 +191,9 @@ export default class Logger {
                 (cls) =>
                     `<${cls.course.code},${cls.course.department},${
                         cls.course.maxNumberOfStudents
-                    },${cls.room ? cls.room.name : ""},[${cls.slots
+                    },${cls.rooms
+                        .map((room) => room.name)
+                        .join(",")},[${cls.slots
                         .map((slot) => slot.name)
                         .join(",")}]>`
             );

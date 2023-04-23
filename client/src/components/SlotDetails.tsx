@@ -35,16 +35,15 @@ const SlotDetails: React.FC<{
                             )})`}
                         </Typography>
                         <Divider sx={{ my: 2 }} />
-                        {classes.map(([cls], idx) => {
+                        {classes.map(([cls, , slot], idx) => {
+                            const room = cls.rooms[cls.slots.indexOf(slot)];
                             return (
                                 <React.Fragment key={idx}>
                                     <Typography variant="body1">
                                         {`${cls.course.name}: ${cls.course.courseType}, ${cls.course.lectureType}, ${cls.course.department}`}
                                     </Typography>
                                     <Typography variant="body2">
-                                        {`${cls.room!?.name}, ${
-                                            cls.room!?.campus
-                                        }`}
+                                        {`${room.name}, ${room.campus}`}
                                     </Typography>
                                     <Typography variant="body2">
                                         {`${cls.course.faculties
