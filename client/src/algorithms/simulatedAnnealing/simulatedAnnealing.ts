@@ -2,10 +2,17 @@ import cloneDeep from "lodash/cloneDeep";
 import pullAt from "lodash/pullAt";
 import sample from "lodash/sample";
 import sampleSize from "lodash/sampleSize";
+import sortBy from "lodash/sortBy";
+import intersection from "lodash/intersection";
+import max from "lodash/max";
+import remove from "lodash/remove";
 
+import Course from "../models/course";
 import Class from "../models/class";
 import Data from "../models/data";
-import { ConflictType, CourseType } from "../utils/enums";
+import { ConflictType, CourseType, LectureType } from "../utils/enums";
+import { Console, time } from "console";
+import { Sort } from "@mui/icons-material";
 
 export default class SimulatedAnnealing {
     HARD_CONSTRAINT_MULTIPLIER = 100000; // TODO
@@ -14,7 +21,242 @@ export default class SimulatedAnnealing {
     FINAL_TEMPERATURE = 0.00001; // TODO
     N_MOVE = 500; // TODO
 
-    constructor(public currClassAllocation: Class[], public data: Data) {}
+    public timetable: number[][];
+
+    constructor(public currClassAllocation: Class[] | null, public data: Data) {
+        // TODO - check its correctness
+        this.timetable = Array(data.slots.length)
+            .fill(0)
+            .map((row) => new Array(data.rooms.length).fill(-1));
+
+        // if (currClassAllocation === undefined){
+
+        //     this.timetable = this.makeTimetableGreedily(this.timetable);
+
+        //     let classAllocations: Class[] = [];
+
+        //     for (const slt of this.timetable)
+        //         for (const cls of slt){
+        //             for (let i = 0; i < classAllocations.length; i++)
+        //                 if (classAllocations[i].course.courseID === cls)
+
+        //         }
+
+        // }
+    }
+
+    hasConflict = (c1: number, c2: number) => {
+        if (c1 === -1 || c2 === -1) return false;
+
+        let Course1 = null,
+            Course2 = null;
+
+        for (const crs of this.data.courses) {
+            if (crs.courseID === c1) Course1 = cloneDeep(crs);
+            if (crs.courseID === c2) Course2 = cloneDeep(crs);
+        }
+
+        if (
+            Course1!.department === Course2!.department ||
+            intersection(Course1!.faculties, Course2!.faculties).length !== 0
+        )
+            return true;
+        else return false;
+    };
+
+    apd = (c: number, timetable: number[][]) => {
+        let availablePeriods = 0;
+        let course = null;
+
+        for (const crs of this.data.courses) {
+            if (crs.courseID === c) course = cloneDeep(crs);
+        }
+
+        for (let i = 0; i < timetable.length; i++) {
+            let check = false;
+            for (let j = 0; j < timetable[i].length; j++) {
+                check = this.hasConflict(c, timetable[i][j]);
+            }
+            if (
+                !check &&
+                (course!.lectureType === LectureType.Normal ||
+                    this.data.slots[i].lectureType === course!.lectureType)
+            )
+                availablePeriods++;
+        }
+
+        return availablePeriods;
+    };
+
+    aps = (c: number, timetable: number[][]) => {
+        let availablePositions = 0;
+        let course = null;
+
+        for (const crs of this.data.courses) {
+            if (crs.courseID === c) course = cloneDeep(crs);
+        }
+
+        for (let i = 0; i < timetable.length; i++) {
+            let check = false;
+            let notOccupiedCount = 0;
+            for (let j = 0; j < timetable[i].length; j++) {
+                check = this.hasConflict(c, timetable[i][j]);
+                if (timetable[i][j] === -1) notOccupiedCount++;
+            }
+            if (
+                !check &&
+                (course!.lectureType === LectureType.Normal ||
+                    this.data.slots[i].lectureType === course!.lectureType)
+            )
+                availablePositions += notOccupiedCount;
+        }
+
+        return availablePositions;
+    };
+
+    nl = (c: number, timetable: number[][]) => {
+        let course = null;
+
+        for (const crs of this.data.courses) {
+            if (crs.courseID === c) course = cloneDeep(crs);
+        }
+
+        let reqLectures = course!.totalCredits;
+        let lecturesDone = 0;
+        for (let i = 0; i < timetable.length; i++) {
+            for (let j = 0; j < timetable[i].length; j++) {
+                if (timetable[i][j] === c)
+                    lecturesDone += this.data.slots[i].credits;
+            }
+        }
+
+        return max([0, reqLectures - lecturesDone]);
+    };
+
+    uac = (c: number, si: number, timetable: number[][]) => {
+        let cntUnavailableUnfinishedLec = 0;
+        let course = null;
+
+        for (const crs of this.data.courses) {
+            if (crs.courseID === c) course = cloneDeep(crs);
+        }
+
+        // TODO check
+        for (const crs of this.data.courses) {
+            if (
+                crs.courseID === c ||
+                !this.hasConflict(c, crs.courseID) ||
+                (course!.lectureType !== LectureType.Normal &&
+                    crs.lectureType !== course!.lectureType)
+            )
+                continue;
+            let check = false;
+            for (const j of timetable[si]) {
+                check = this.hasConflict(j, crs.courseID);
+            }
+
+            if (
+                !check &&
+                (crs.lectureType === LectureType.Normal ||
+                    crs.lectureType === this.data.slots[si].lectureType)
+            )
+                cntUnavailableUnfinishedLec += this.nl(
+                    crs.courseID,
+                    timetable
+                )!;
+        }
+
+        // Also add current Conflicts
+        let existingConflicts = 0;
+        for (const j of timetable[si]) {
+            if (this.hasConflict(c, j)) existingConflicts++;
+        }
+
+        return cntUnavailableUnfinishedLec + 2 * existingConflicts;
+    };
+
+    makeTimetableGreedily = (timetable: number[][]) => {
+        let allCourses = cloneDeep(this.data.courses);
+
+        while (allCourses.length !== 0) {
+            console.log("allCourses.length: ", allCourses.length);
+            // if (allCourses.length === 1)
+            //     console.log("allCourses.length: ", allCourses.length);
+
+            remove(allCourses, (o) => {
+                return this.nl(o.courseID, timetable) === 0;
+            });
+
+            allCourses = sortBy(allCourses, [
+                (o) => {
+                    return (
+                        this.apd(o.courseID, timetable) /
+                        Math.sqrt(this.nl(o.courseID, timetable)!)
+                    );
+                },
+                (o) => {
+                    return (
+                        this.aps(o.courseID, timetable) *
+                        Math.sqrt(this.nl(o.courseID, timetable)!)
+                    );
+                },
+            ]);
+
+            let chosenCourse = allCourses[0];
+            let ci = 0,
+                cj = 0;
+            let min_uac = 1000000;
+
+            for (let i = 0; i < timetable.length; i++) {
+                for (let j = 0; j < timetable[i].length; j++) {
+                    if (
+                        timetable[i][j] !== -1 ||
+                        !(
+                            chosenCourse.lectureType === LectureType.Normal ||
+                            this.data.slots[i].lectureType ===
+                                chosenCourse.lectureType
+                        )
+                    )
+                        continue;
+                    let g = this.uac(chosenCourse.courseID, i, timetable);
+                    if (g < min_uac) {
+                        min_uac = g;
+                        ci = i;
+                        cj = j;
+                    }
+                }
+            }
+
+            timetable[ci][cj] = chosenCourse.courseID;
+
+            remove(allCourses, (o) => {
+                return this.nl(o.courseID, timetable) === 0;
+            });
+
+            // if (allCourses.length === 1) {
+            //     let var1 = 1;
+            //     console.log("Final timetable:", timetable);
+            // }
+        }
+
+        console.log("Final timetable:", timetable);
+        return timetable;
+    };
+
+    checkTimetable = (timetable: number[][]) => {
+        let conf = 0;
+        for (const r of timetable) {
+            for (let i = 0; i < r.length; ++i) {
+                for (let j = i + 1; j < r.length; ++j) {
+                    if (this.hasConflict(r[i], r[j])) {
+                        conf++;
+                    }
+                }
+            }
+        }
+        console.log("Conflicts:", conf);
+        return conf;
+    };
 
     roomCapacityConflictCost = (
         currClassAllocation: Class[],
@@ -440,19 +682,19 @@ export default class SimulatedAnnealing {
 
             turn = (turn + 1) % 3;
 
-            let currCost = this.cost(this.currClassAllocation),
-                nextCost = this.cost(nextAllocation),
-                bestCost = this.cost(bestAllocation);
+            let currCost = this.cost(this.currClassAllocation!),
+                nextCost = this.cost(nextAllocation!),
+                bestCost = this.cost(bestAllocation!);
 
             console.log("Best Cost:", bestCost);
             console.log("   Current Temperature:", currTemperature);
             console.log(
                 "      Current conflicts:",
-                this.totalConflicts(this.currClassAllocation)
+                this.totalConflicts(this.currClassAllocation!)
             );
             console.log(
                 "      Best conflicts:",
-                this.totalConflicts(bestAllocation)
+                this.totalConflicts(bestAllocation!)
             );
             console.log("      Reheat value:", reHeat);
 
@@ -470,7 +712,7 @@ export default class SimulatedAnnealing {
                 currTemperature = this.temperature(currTemperature);
             iter_mod_5 = (iter_mod_5 + 1) % 3;
 
-            if (this.cost(this.currClassAllocation) === currCost) {
+            if (this.cost(this.currClassAllocation!) === currCost) {
                 if (reHeat === 360) reHeat -= 100;
                 reHeat++;
             } else reHeat = 0;

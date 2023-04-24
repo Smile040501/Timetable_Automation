@@ -5,7 +5,7 @@ import SimulatedAnnealing from "./simulatedAnnealing";
 const execute = () => {
     const VERBOSE = process.env.NODE_ENV !== "production";
     const RANDOM_DATA = true;
-    const UPPER_BOUND = 2000;
+    const UPPER_BOUND = 100;
     const MIN_NUM_FACULTY = 2;
     const NUM_PME = 1;
     const EXPANDED_SLOTS = true;
@@ -19,10 +19,15 @@ const execute = () => {
         EXPANDED_SLOTS,
     });
 
-    const simulatedAlgo = new SimulatedAnnealing(bestSchedule.classes, data);
-    const bestScheduleAllocation = simulatedAlgo.execute();
+    // const simulatedAlgo = new SimulatedAnnealing(bestSchedule.classes, data);
+    // const bestScheduleAllocation = simulatedAlgo.execute();
+    let simulatedAlgo = new SimulatedAnnealing(null, data);
+    simulatedAlgo.timetable = simulatedAlgo.makeTimetableGreedily(
+        simulatedAlgo.timetable
+    );
+    simulatedAlgo.checkTimetable(simulatedAlgo.timetable);
 
-    logBestScheduleResults(bestScheduleAllocation, [], data);
+    // logBestScheduleResults(bestScheduleAllocation, [], data);
 };
 
 export default execute;
