@@ -1,6 +1,11 @@
 import { Types } from "mongoose";
 
-import { UserRole } from "@ta/shared/utils";
+import {
+    CourseAsJSON,
+    RoomAsJSON,
+    SlotAsJSON,
+    UserRole,
+} from "@ta/shared/utils";
 
 import { User } from "./user";
 
@@ -19,4 +24,22 @@ export interface AuthResponse extends MsgResponse {
 
 export interface CreateUserResponse extends MsgResponse {
     newUser: User & Required<{ _id: Types.ObjectId }>;
+}
+
+export interface FetchCoursesResponse extends MsgResponse {
+    courses: (CourseAsJSON & { _id: Types.ObjectId } & Required<{
+            _id: Types.ObjectId;
+        }>)[];
+}
+
+export interface FetchRoomsResponse extends MsgResponse {
+    rooms: (RoomAsJSON & { _id: Types.ObjectId } & Required<{
+            _id: Types.ObjectId;
+        }>)[];
+}
+
+export interface FetchSlotsResponse extends MsgResponse {
+    slots: (SlotAsJSON & { _id: Types.ObjectId } & Required<{
+            _id: Types.ObjectId;
+        }>)[];
 }

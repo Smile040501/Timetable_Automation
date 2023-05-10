@@ -2,8 +2,10 @@
 import express from "express";
 import { body } from "express-validator";
 
+import { UserRole } from "@ta/shared/utils";
+
 import adminController from "../controllers/admin";
-import { hasValidationError, isAdmin, isAuth } from "../middlewares";
+import { hasValidationError, validateRoles, isAuth } from "../middlewares";
 import { UserModel } from "../models";
 
 const router = express.Router();
@@ -11,7 +13,7 @@ const router = express.Router();
 router.post(
     "/createUser",
     isAuth,
-    isAdmin,
+    validateRoles([UserRole.Admin]),
     [
         body("email")
             .isEmail()
@@ -35,7 +37,7 @@ router.post(
 router.post(
     "/deleteUser",
     isAuth,
-    isAdmin,
+    validateRoles([UserRole.Admin]),
     [
         body("email")
             .isEmail()

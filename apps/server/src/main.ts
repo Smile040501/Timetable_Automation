@@ -12,6 +12,9 @@ import { credentials, errorHandler, rateLimitHandler } from "./middlewares";
 
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
+import courseRoutes from "./routes/course";
+import roomRoutes from "./routes/room";
+import slotRoutes from "./routes/slot";
 
 const app = express();
 
@@ -50,6 +53,9 @@ app.use(cookieParser());
 // Define app routes here
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/rooms", roomRoutes);
+app.use("/api/slots", slotRoutes);
 
 // Error handler
 app.use(errorHandler);
