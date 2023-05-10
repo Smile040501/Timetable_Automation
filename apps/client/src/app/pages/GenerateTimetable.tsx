@@ -31,6 +31,7 @@ import {
 } from "@ta/shared/algorithms";
 import { AlgorithmConfigData } from "@ta/shared/utils";
 
+import { environment as env } from "../../environment";
 import { updateClasses, updateData } from "../redux/actions";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
@@ -124,7 +125,7 @@ const algorithmOptions = [
 ];
 
 const defaultAlgorithmConfig: AlgorithmConfigData = {
-    VERBOSE: process.env.NODE_ENV === "development",
+    VERBOSE: !env.production,
     RANDOM_DATA: true,
     UPPER_BOUND: 10000,
     MIN_NUM_FACULTY: 2,

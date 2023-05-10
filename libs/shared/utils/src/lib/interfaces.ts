@@ -50,3 +50,7 @@ export interface Filters {
     lectureTypes: string[];
     campuses: string[];
 }
+
+export default interface DocumentType<T> {
+    _doc: T;
+}

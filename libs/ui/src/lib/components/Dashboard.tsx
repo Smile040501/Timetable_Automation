@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
@@ -11,7 +11,6 @@ import Divider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -71,7 +70,11 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-export const Dashboard: React.FC<{ routes: AppRoutes }> = ({ routes }) => {
+export const Dashboard: React.FC<{
+    routes: AppRoutes;
+    header: ReactNode;
+    showDrawer: boolean;
+}> = ({ routes, header, showDrawer }) => {
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -87,45 +90,41 @@ export const Dashboard: React.FC<{ routes: AppRoutes }> = ({ routes }) => {
                             pr: "24px", // keep right padding when drawer closed
                         }}
                     >
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer}
-                            sx={{
-                                marginRight: "36px",
-                                ...(open && { display: "none" }),
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1, textAlign: "center" }}
-                        >
-                            Timetable Generator
-                        </Typography>
+                        {showDrawer && (
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={toggleDrawer}
+                                sx={{
+                                    marginRight: "36px",
+                                    ...(open && { display: "none" }),
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        )}
+                        {header}
                     </Toolbar>
                 </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            px: [1],
-                        }}
-                    >
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </Toolbar>
-                    <Divider />
-                    <DrawerList routes={routes} />
-                </Drawer>
+                {showDrawer && (
+                    <Drawer variant="permanent" open={open}>
+                        <Toolbar
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end",
+                                px: [1],
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        </Toolbar>
+                        <Divider />
+                        <DrawerList routes={routes} />
+                    </Drawer>
+                )}
                 <Box
                     component="main"
                     sx={{

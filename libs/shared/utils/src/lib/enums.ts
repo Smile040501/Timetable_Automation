@@ -45,3 +45,9 @@ export enum Departments {
     HSE = "HSE",
     GENERAL = "GENERAL",
 }
+
+export enum UserRole {
+    Admin = "Admin",
+    Coordinator = "Coordinator",
+    Guest = "Guest",
+}

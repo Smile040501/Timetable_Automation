@@ -9,4 +9,6 @@ export * from "./lib/iSchedule";
 export * from "./lib/logger";
 export * from "./lib/population";
 export * from "./lib/room";
+export * from "./lib/serverResponse";
 export * from "./lib/slot";
+export * from "./lib/user";

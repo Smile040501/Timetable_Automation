@@ -1,14 +1,19 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { AnyAction, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
-import uploadedDataReducer from "./slices/uploadedData";
+import { environment as env } from "../../environment";
 import algorithmDataReducer from "./slices/algorithmData";
+import authUserReducer from "./slices/authUser";
+import uiReducer from "./slices/ui";
+import uploadedDataReducer from "./slices/uploadedData";
 
 export const store = configureStore({
     reducer: {
-        uploadedData: uploadedDataReducer,
         algorithmData: algorithmDataReducer,
+        authUser: authUserReducer,
+        ui: uiReducer,
+        uploadedData: uploadedDataReducer,
     },
-    devTools: process.env.NODE_ENV !== "production",
+    devTools: !env.production,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: false,
@@ -18,3 +23,10 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+    ReturnType,
+    RootState,
+    unknown,
+    AnyAction
+>;
