@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { environment as env } from "../environment";
 
-export default axios.create({
+const instance = axios.create({
     baseURL: env.backendURI,
 });
+
+export default instance;

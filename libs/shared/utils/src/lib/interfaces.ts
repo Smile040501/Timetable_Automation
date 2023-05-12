@@ -27,6 +27,15 @@ export interface SlotAsJSON {
     dayTime: [string, { start: string; end: string }][];
 }
 
+export interface SlotAsUploaded {
+    name: string;
+    lectureType: string;
+    dayTime: {
+        weekDay: string;
+        interval: { start: string; end: string };
+    }[];
+}
+
 export interface AlgorithmConfigData {
     VERBOSE?: boolean;
     RANDOM_DATA?: boolean;

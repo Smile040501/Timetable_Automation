@@ -28,6 +28,7 @@ export enum CourseType {
     GCE = "GCE", // General Course Electives
     HSE = "HSE", // Humanities and Social Science Electives
     SME = "SME", // Science and Mathematics Electives
+    MAE = "MAE",
     OE = "OE", // Open Electives
     PMT = "PMT", // Professional Major Core
     PMP = "PMP", // Professional Major Lab
@@ -43,6 +44,7 @@ export enum Departments {
     GCE = "GCE",
     SME = "SME",
     HSE = "HSE",
+    MAE = "MAE",
     GENERAL = "GENERAL",
 }
 

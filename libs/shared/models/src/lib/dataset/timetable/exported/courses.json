@@ -1,105 +1,5 @@
 [
     {
-        "code": "PHY1",
-        "name": "Physics",
-        "credits": [2, 1, 0, 3],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Soham Manni", "Bibhu Sarangi", "Moumita Nandy"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "LAS1",
-        "name": "Linear Algebra and Series",
-        "credits": [3, 1, 0, 4],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Sarath Sasi", "V Muruganandam", "S H Kulkarni"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "EE1",
-        "name": "Ecology and Environment",
-        "credits": [2, 0, 0, 2],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": [
-            "Athira P",
-            "Sarmistha Singh",
-            "Deepak Jaiswal",
-            "Praveena G"
-        ],
-        "department": "GENERAL"
-    },
-    {
-        "code": "CY1040",
-        "name": "Basic Chemistry for Engineers",
-        "credits": [2, 1, 0, 3],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Rositha Kuniyil", "Umadevi D", "Supratik Sen Mojumdar"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "MA1021",
-        "name": "Multivariable Calculus",
-        "credits": [3, 1, 0, 4],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Lakshmi Sankar", "Arpan Kabiraj", "Parangama Sarkar"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "HS1010",
-        "name": "Technology and Society",
-        "credits": [2, 0, 0, 2],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Reenu Punnoose"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "CE1020",
-        "name": "Engineering Mechanics",
-        "credits": [3, 1, 0, 4],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Sovan Lal Das", "Sanjukta Chakraborty", "Arun C O"],
-        "department": "GENERAL"
-    },
-    {
-        "code": "ID1110",
-        "name": "Introduction to Programming",
-        "credits": [2, 0, 3, 4],
-        "courseType": "COMMON",
-        "lectureType": "Lab",
-        "maxNumberOfStudents": 100,
-        "faculties": [
-            "Albert Sunny",
-            "Srimanta Bhattacharya",
-            "Sovan Lal Das",
-            "Piyush P. Kurur"
-        ],
-        "department": "GENERAL"
-    },
-    {
-        "code": "HS2000",
-        "name": "Professional Ethics",
-        "credits": [2, 0, 0, 2],
-        "courseType": "COMMON",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Anoop George"],
-        "department": "GENERAL"
-    },
-    {
         "code": "HS2031",
         "name": "Principles of Economics",
         "credits": [3, 0, 0, 3],
@@ -377,16 +277,6 @@
         "lectureType": "Normal",
         "maxNumberOfStudents": 60,
         "faculties": ["Athira P", "Sarmistha Singh"],
-        "department": "CE"
-    },
-    {
-        "code": "ME5631",
-        "name": "Object-Oriented Numerical Analysis",
-        "credits": [3, 0, 0, 3],
-        "courseType": "PME",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["S D Rajan", "Samarjeet Chanda"],
         "department": "CE"
     },
     {
@@ -1048,65 +938,5 @@
         "maxNumberOfStudents": 60,
         "faculties": ["D Chakradhar", "Girish Govande"],
         "department": "ME"
-    },
-    {
-        "code": "CY5002",
-        "name": "Chemistry of Materials",
-        "credits": [3, 0, 0, 3],
-        "courseType": "PMT",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Dinesh Jagadeesan"],
-        "department": "DS"
-    },
-    {
-        "code": "CY5004",
-        "name": "Molecular Dynamics and Basic Statistical Thermodynamics",
-        "credits": [3, 0, 0, 3],
-        "courseType": "PMT",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Debarati Chatterjee"],
-        "department": "DS"
-    },
-    {
-        "code": "CY5006",
-        "name": "Elucidation of Molecular Structure",
-        "credits": [3, 0, 0, 3],
-        "courseType": "PMT",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Shanmugaraju Sankarasekaran"],
-        "department": "DS"
-    },
-    {
-        "code": "CY5008",
-        "name": "Reaction Mechanisms",
-        "credits": [3, 0, 0, 3],
-        "courseType": "PMT",
-        "lectureType": "Normal",
-        "maxNumberOfStudents": 60,
-        "faculties": ["Mintu Porel"],
-        "department": "DS"
-    },
-    {
-        "code": "CY5102",
-        "name": "Synthesis, Energetics and Dynamics Lab 2",
-        "credits": [0, 0, 3, 2],
-        "courseType": "PMP",
-        "lectureType": "Lab",
-        "maxNumberOfStudents": 100,
-        "faculties": ["Dinesh Jagadeesan"],
-        "department": "DS"
-    },
-    {
-        "code": "CY5104",
-        "name": "Synthesis, Energetics and Dynamics Lab 3",
-        "credits": [0, 0, 3, 2],
-        "courseType": "PMP",
-        "lectureType": "Lab",
-        "maxNumberOfStudents": 100,
-        "faculties": ["Mintu Porel"],
-        "department": "DS"
     }
 ]

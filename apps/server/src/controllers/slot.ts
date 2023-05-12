@@ -6,7 +6,7 @@ import {
     HttpError,
     httpStatusTypes,
     httpStatusNames,
-    SlotAsJSON,
+    SlotAsUploaded,
 } from "@ta/shared/utils";
 
 import { AuthRequest } from "../utils/interfaces";
@@ -34,7 +34,7 @@ const getSlots: RequestHandler = async (
 };
 
 const uploadSlots: RequestHandler = async (
-    req: AuthRequest<{ slots: SlotAsJSON[] }>,
+    req: AuthRequest<{ slots: SlotAsUploaded[] }>,
     res,
     next
 ) => {
@@ -44,9 +44,18 @@ const uploadSlots: RequestHandler = async (
         const session = await mongoose.startSession();
         session.startTransaction();
 
+        await SlotModel.deleteMany({});
+
         for (let i = 0; i < slots.length; ++i) {
-            const newSlot = new SlotModel({ ...slots[i] });
-            await newSlot.save({ session });
+            await SlotModel.findOneAndUpdate(
+                { name: slots[i].name },
+                slots[i],
+                {
+                    new: true,
+                    upsert: true,
+                    session,
+                }
+            );
         }
 
         await session.commitTransaction();

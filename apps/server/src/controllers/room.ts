@@ -44,9 +44,18 @@ const uploadRooms: RequestHandler = async (
         const session = await mongoose.startSession();
         session.startTransaction();
 
+        await RoomModel.deleteMany({});
+
         for (let i = 0; i < rooms.length; ++i) {
-            const newRoom = new RoomModel({ ...rooms[i] });
-            await newRoom.save({ session });
+            await RoomModel.findOneAndUpdate(
+                { name: rooms[i].name },
+                rooms[i],
+                {
+                    new: true,
+                    upsert: true,
+                    session,
+                }
+            );
         }
 
         await session.commitTransaction();

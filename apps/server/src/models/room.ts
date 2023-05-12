@@ -6,6 +6,7 @@ const roomSchema = new Schema<RoomAsJSON>(
     {
         name: {
             type: String,
+            unique: true,
             required: true,
         },
         lectureType: {

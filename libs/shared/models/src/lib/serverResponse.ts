@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import {
     CourseAsJSON,
     RoomAsJSON,
-    SlotAsJSON,
+    SlotAsUploaded,
     UserRole,
 } from "@ta/shared/utils";
 
@@ -39,7 +39,7 @@ export interface FetchRoomsResponse extends MsgResponse {
 }
 
 export interface FetchSlotsResponse extends MsgResponse {
-    slots: (SlotAsJSON & { _id: Types.ObjectId } & Required<{
+    slots: (SlotAsUploaded & { _id: Types.ObjectId } & Required<{
             _id: Types.ObjectId;
         }>)[];
 }

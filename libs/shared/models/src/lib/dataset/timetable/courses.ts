@@ -5,15 +5,6 @@ import { Faculty } from "../../faculty";
 import { roomCapacities } from "./rooms";
 
 const coursesAsTXT = [
-    "PHY1 | Physics | COMMON | Normal | GENERAL | 2-1-0-3 | Soham Manni-Bibhu Sarangi-Moumita Nandy",
-    "LAS1 | Linear Algebra and Series | COMMON | Normal | GENERAL | 3-1-0-4 | Sarath Sasi-V Muruganandam-S H Kulkarni",
-    "EE1 | Ecology and Environment | COMMON | Normal | GENERAL | 2-0-0-2 | Athira P-Sarmistha Singh-Deepak Jaiswal-Praveena G",
-    "CY1040 | Basic Chemistry for Engineers | COMMON | Normal | GENERAL | 2-1-0-3 | Rositha Kuniyil-Umadevi D-Supratik Sen Mojumdar",
-    "MA1021 | Multivariable Calculus | COMMON | Normal | GENERAL | 3-1-0-4 | Lakshmi Sankar-Arpan Kabiraj-Parangama Sarkar",
-    "HS1010 | Technology and Society | COMMON | Normal | GENERAL | 2-0-0-2 | Reenu Punnoose",
-    "CE1020 | Engineering Mechanics | COMMON | Normal | GENERAL | 3-1-0-4 | Sovan Lal Das-Sanjukta Chakraborty-Arun C O",
-    "ID1110 | Introduction to Programming | COMMON | Lab | GENERAL | 2-0-3-4 | Albert Sunny-Srimanta Bhattacharya-Sovan Lal Das-Piyush P. Kurur",
-    "HS2000 | Professional Ethics | COMMON | Normal | GENERAL | 2-0-0-2 | Anoop George",
     "HS2031 | Principles of Economics | HSE | Normal | HSE | 3-0-0-3 | Amrita Roy",
     "HS2XXX | Psychology and Life | HSE | Normal | HSE | 3-0-0-3 | Sudarshan Kottai",
     "HS2302 | French A1.1 | HSE | Normal | HSE | 3-0-0-3 | Reenu Punnoose",
@@ -42,7 +33,6 @@ const coursesAsTXT = [
     "CE5003 | Introduction to GIS and Remote Sensing | PME | Normal | CE | 1-0-3-3 | Sarmistha Singh",
     "CE4512 | Airport and Railway Engineering | PME | Normal | CE | 3-0-0-3 | Veena Venudharan",
     "CE5514 | Surface Water Hydrology | PME | Normal | CE | 3-0-0-3 | Athira P-Sarmistha Singh",
-    "ME5631 | Object-Oriented Numerical Analysis | PME | Normal | CE | 3-0-0-3 | S D Rajan-Samarjeet Chanda",
     "CE5515 | Advanced Mechanics of Structures | PME | Normal | CE | 3-0-0-3 | Arun C O-Gokulnath C",
     "CE5614 | Pavement Analysis & Design | PME | Normal | CE | 3-0-0-3 | Veena Venudharan",
     "CE5002 | Applied soil mechanics | PME | Normal | CE | 3-1-0-4 | Rakesh J Pillai",
@@ -109,12 +99,6 @@ const coursesAsTXT = [
     "ME5619 | Combustion | PME | Normal | ME | 3-0-0-3 | Krishna Seshagiri",
     "ME5631 | Object-Oriented Numerical Analysis | PME | Normal | ME | 3-0-0-3 | S D Rajan-Samarjeet Chanda",
     "ME5628 | Lean Manufacturing | PME | Normal | ME | 3-0-0-3 | D Chakradhar-Girish Govande",
-    "CY5002 | Chemistry of Materials | PMT | Normal | DS | 3-0-0-3 | Dinesh Jagadeesan",
-    "CY5004 | Molecular Dynamics and Basic Statistical Thermodynamics | PMT | Normal | DS | 3-0-0-3 | Debarati Chatterjee",
-    "CY5006 | Elucidation of Molecular Structure | PMT | Normal | DS | 3-0-0-3 | Shanmugaraju Sankarasekaran",
-    "CY5008 | Reaction Mechanisms | PMT | Normal | DS | 3-0-0-3 | Mintu Porel",
-    "CY5102 | Synthesis, Energetics and Dynamics Lab 2 | PMP | Lab | DS | 0-0-3-2 | Dinesh Jagadeesan",
-    "CY5104 | Synthesis, Energetics and Dynamics Lab 3 | PMP | Lab | DS | 0-0-3-2 | Mintu Porel",
 ];
 
 const getDefaultCoursesAsJSON = () => {

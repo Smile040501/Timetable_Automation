@@ -1,3 +1,5 @@
+import { SlotAsJSON, SlotAsUploaded } from "./interfaces";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getRandomEnumKey = (enumeration: any) => {
     const keys = Object.keys(enumeration).filter(
@@ -37,4 +39,32 @@ export const generateRandomColor = () => {
     const hex = Math.floor(Math.random() * 0xffffff);
     const color = "#" + hex.toString(16);
     return color;
+};
+
+export const convertSlotsJSONToUploaded = (
+    slot: SlotAsJSON
+): SlotAsUploaded => {
+    return {
+        ...slot,
+        dayTime: slot.dayTime.map((dt) => {
+            return {
+                weekDay: dt[0],
+                interval: {
+                    start: dt[1].start,
+                    end: dt[1].end,
+                },
+            };
+        }),
+    };
+};
+
+export const convertSlotsUploadedToJSON = (
+    slot: SlotAsUploaded
+): SlotAsJSON => {
+    return {
+        ...slot,
+        dayTime: slot.dayTime.map((dt) => {
+            return [dt.weekDay, dt.interval];
+        }),
+    };
 };

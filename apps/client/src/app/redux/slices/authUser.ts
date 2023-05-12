@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { AuthResponse } from "@ta/shared/models";
-import { AuthUserState } from "@ta/shared/models";
+import { AuthUserState, AuthResponse } from "@ta/shared/models";
+import { httpStatusNames, httpStatusTypes } from "@ta/shared/utils";
 
 import axios from "../../axios";
 import { AppThunk } from "../store";
@@ -95,6 +95,11 @@ export const auth =
             const res = await axios.post<AuthResponse>("/auth/signIn", {
                 credential,
             });
+
+            if (res.status !== httpStatusTypes[httpStatusNames.OK].status) {
+                throw new Error("Error Signing Up!");
+            }
+
             const { email, name, image, roles, token, tokenExpiration } =
                 res.data;
             const userInfo: AuthUserState = {

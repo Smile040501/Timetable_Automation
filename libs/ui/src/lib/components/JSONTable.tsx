@@ -18,9 +18,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
         color: theme.palette.common.white,
+        minWidth: 100,
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
+        minWidth: 100,
     },
 }));
 

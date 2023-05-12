@@ -4,4 +4,11 @@ export { auth, authCheckState, authLogout } from "./slices/authUser";
 
 export { updateUI } from "./slices/ui";
 
-export { uploadCourses, uploadRooms, uploadSlots } from "./slices/uploadedData";
+export {
+    getCourses,
+    uploadCourses,
+    getRooms,
+    uploadRooms,
+    getSlots,
+    uploadSlots,
+} from "./slices/uploadedData";

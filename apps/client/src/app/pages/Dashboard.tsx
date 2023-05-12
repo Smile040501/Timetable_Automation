@@ -68,6 +68,7 @@ const Dashboard: React.FC = () => {
                                     alt={userInfo.name}
                                     src={userInfo.image}
                                     sx={{ width: 56, height: 56 }}
+                                    imgProps={{ referrerPolicy: "no-referrer" }}
                                 />
                             </Grid>
                             <Grid item>

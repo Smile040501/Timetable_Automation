@@ -235,15 +235,15 @@ export default class GeneticAlgorithm {
                 Allocated: ${bestSchedule.allocatedClasses.length}, Fitness: ${bestSchedule.fitness}`
             );
 
+            if (bestSchedule.fitness >= this.BEST_SCHEDULE_FITNESS) {
+                break;
+            }
+
             this.population = this.evolve(this.population);
             Population.sort(this.population.schedules);
             bestSchedule = this.population.schedules[0] as Schedule;
 
             if (upperBound !== -1 && generationNumber === upperBound) break;
-
-            if (bestSchedule.fitness >= this.BEST_SCHEDULE_FITNESS) {
-                break;
-            }
         }
 
         this.data.logFunction(

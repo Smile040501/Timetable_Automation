@@ -1,11 +1,12 @@
 import { Schema, model } from "mongoose";
 
-import { LectureType, SlotAsJSON } from "@ta/shared/utils";
+import { LectureType, SlotAsUploaded } from "@ta/shared/utils";
 
-const slotSchema = new Schema<SlotAsJSON>(
+const slotSchema = new Schema<SlotAsUploaded>(
     {
         name: {
             type: String,
+            unique: true,
             required: true,
         },
         lectureType: {
@@ -14,18 +15,8 @@ const slotSchema = new Schema<SlotAsJSON>(
             required: true,
         },
         dayTime: {
-            type: [String, { start: String, end: String }],
-            validate: [
-                (arr: (string | { start: string; end: string })[]) => {
-                    return (
-                        arr.length === 2 &&
-                        typeof arr[0] === "string" &&
-                        typeof arr[1] === "object" &&
-                        arr[1].start &&
-                        arr[1].end
-                    );
-                },
-                "{PATH} should be a tuple array of form [WeekDay, {start: string, end: string}]",
+            type: [
+                { weekDay: String, interval: { start: String, end: String } },
             ],
             required: true,
         },
@@ -33,4 +24,4 @@ const slotSchema = new Schema<SlotAsJSON>(
     { timestamps: true }
 );
 
-export default model<SlotAsJSON>("Slot", slotSchema);
+export default model<SlotAsUploaded>("Slot", slotSchema);

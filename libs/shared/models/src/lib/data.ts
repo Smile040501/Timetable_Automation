@@ -76,8 +76,8 @@ export class Data {
             this.slots = this.slots.flatMap((s) => Slot.getExpandedSlots(s));
         }
 
-        this.departmentsWithConflicts = ["CSE", "EE", "ME", "CE", "GENERAL"];
-        this.departmentsWithNoConflicts = ["GCE", "HSE", "SME"];
+        this.departmentsWithConflicts = ["CSE", "EE", "ME", "CE"];
+        this.departmentsWithNoConflicts = ["GCE", "HSE", "SME", "MAE"];
         this.possibleSlotCombinations = new Map<
             number,
             Map<string, Slot[][]>
