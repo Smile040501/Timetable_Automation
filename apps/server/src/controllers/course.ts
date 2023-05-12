@@ -46,7 +46,7 @@ const uploadCourses: RequestHandler = async (
         const session = await mongoose.startSession();
         session.startTransaction();
 
-        await CourseModel.deleteMany({});
+        await CourseModel.deleteMany({}, { session });
 
         for (let i = 0; i < courses.length; ++i) {
             await CourseModel.findOneAndUpdate(

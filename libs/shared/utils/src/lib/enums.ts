@@ -53,3 +53,8 @@ export enum UserRole {
     Coordinator = "Coordinator",
     Guest = "Guest",
 }
+
+export enum AlgorithmStatus {
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+}

@@ -9,4 +9,5 @@ export const environment = {
     windowMins: process.env.NX_WINDOW_MIN,
     testerEmails: process.env.NX_TESTER_EMAILS,
     allowedEmailDomains: process.env.NX_ALLOWED_EMAIL_DOMAINS,
+    algorithmStatus: process.env.NX_REDIS_ALGO_STATUS_KEY,
 };

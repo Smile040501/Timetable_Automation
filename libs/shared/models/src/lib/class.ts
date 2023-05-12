@@ -19,18 +19,18 @@ import { Room } from "./room";
 import { Slot } from "./slot";
 
 // Gene for a Chromosome
-export class Class {
+export class Class<T = null> {
     constructor(
         public id: number,
-        public course: Course,
-        public slots: Slot[] = [],
-        public rooms: Room[] = []
+        public course: T extends null ? Course : T,
+        public slots: (T extends null ? Slot : T)[] = [],
+        public rooms: (T extends null ? Room : T)[] = []
     ) {}
 
-    toString = () => {
-        return `<${this.course.code},${[...new Set(this.rooms)]
+    static toString = (cls: Class) => {
+        return `<${cls.course.code},${[...new Set(cls.rooms)]
             .map((room) => room.name)
-            .join(",")},[${this.slots.map((slot) => slot.name).join(",")}]>`;
+            .join(",")},[${cls.slots.map((slot) => slot.name).join(",")}]>`;
     };
 
     // If two classes overlap as per their allotted slots

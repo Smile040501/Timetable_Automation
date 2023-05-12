@@ -10,11 +10,13 @@ import { connectDB, corsOptions } from "./config";
 
 import { credentials, errorHandler, rateLimitHandler } from "./middlewares";
 
+import algorithmRoutes from "./routes/algorithm";
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
 import courseRoutes from "./routes/course";
 import roomRoutes from "./routes/room";
 import slotRoutes from "./routes/slot";
+import redisClient from "./utils/redisConnect";
 
 const app = express();
 
@@ -51,6 +53,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Define app routes here
+app.use("/api/algorithm", algorithmRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/courses", courseRoutes);
@@ -68,4 +71,11 @@ mongoose.connection.once("open", () => {
     app.listen(port, () => {
         console.log(`Listening at http://localhost:${port}`);
     });
+});
+
+process.on("SIGINT", async () => {
+    if (redisClient.isOpen) {
+        await redisClient.quit();
+    }
+    process.exit();
 });

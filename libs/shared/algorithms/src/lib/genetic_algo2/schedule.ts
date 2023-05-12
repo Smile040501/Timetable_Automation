@@ -22,7 +22,7 @@ export default class Schedule implements ISchedule {
     initialize() {
         // Create a new class for each course
         this.data.courses.forEach((course, i) => {
-            const newClass = new Class(i + 1, course);
+            const newClass = new Class<null>(i + 1, course);
             this.classes.push(newClass);
         });
         // Shuffle the classes array

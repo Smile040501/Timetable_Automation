@@ -95,3 +95,14 @@ export class Data {
         this.logFunction(this);
     }
 }
+
+export interface DataUploaded<T = null> {
+    rooms: (T extends null ? RoomAsJSON : T)[];
+    slots: (T extends null ? SlotAsJSON : T)[];
+    courses: (T extends null ? CourseAsJSON : T)[];
+    faculties: string[];
+    departmentsWithConflicts: string[];
+    departmentsWithNoConflicts: string[];
+    maxSlotCredits: number;
+    minSlotCredits: number;
+}

@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 import {
+    AlgorithmStatus,
     CourseAsJSON,
     RoomAsJSON,
     SlotAsUploaded,
@@ -42,4 +43,10 @@ export interface FetchSlotsResponse extends MsgResponse {
     slots: (SlotAsUploaded & { _id: Types.ObjectId } & Required<{
             _id: Types.ObjectId;
         }>)[];
+}
+
+export interface FetchAlgorithmDataResponse extends MsgResponse {
+    algorithmStatus: AlgorithmStatus;
+    classes: string[];
+    data?: string;
 }

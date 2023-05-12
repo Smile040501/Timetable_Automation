@@ -44,7 +44,7 @@ const uploadSlots: RequestHandler = async (
         const session = await mongoose.startSession();
         session.startTransaction();
 
-        await SlotModel.deleteMany({});
+        await SlotModel.deleteMany({}, { session });
 
         for (let i = 0; i < slots.length; ++i) {
             await SlotModel.findOneAndUpdate(

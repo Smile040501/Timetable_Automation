@@ -65,9 +65,7 @@ export class Interval {
         options = Interval.displayOptions
     ) => {
         const date = new Date(1, 1, 1, hours, minutes);
-        return new Intl.DateTimeFormat(navigator.language, options).format(
-            date
-        );
+        return new Intl.DateTimeFormat("en-US", options).format(date);
     };
 
     static getMinutes = (i: Interval): [number, number] => {
