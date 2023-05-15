@@ -1,4 +1,4 @@
-import { WeekDay } from "@ta/shared/utils";
+import { SlotAsJSON, WeekDay } from "@ta/shared/utils";
 
 import { Interval } from "./interval";
 
@@ -63,6 +63,18 @@ export class Slot {
             }
         });
         return result;
+    };
+
+    static createSlotFromJSON = (slotID: number, slot: SlotAsJSON) => {
+        return new Slot(
+            slotID,
+            slot.name,
+            slot.lectureType,
+            slot.dayTime.map((dt) => [
+                dt[0] as WeekDay,
+                new Interval(dt[1].start, dt[1].end),
+            ])
+        );
     };
 
     static exportAsJSON = (slots: Slot[]) => {

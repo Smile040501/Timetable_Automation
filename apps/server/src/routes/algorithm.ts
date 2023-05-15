@@ -8,15 +8,22 @@ const router = express.Router();
 
 router.post(
     "/generateTimetable",
-    // isAuth,
-    // validateRoles([UserRole.Admin, UserRole.Coordinator]),
+    isAuth,
+    validateRoles([UserRole.Admin, UserRole.Coordinator]),
     algorithmController.generateTimetable
+);
+
+router.get(
+    "/algorithmStatus",
+    isAuth,
+    validateRoles([UserRole.Admin, UserRole.Coordinator]),
+    algorithmController.getAlgorithmStatus
 );
 
 router.get(
     "/timetableData",
     isAuth,
-    validateRoles([UserRole.Admin, UserRole.Coordinator]),
+    validateRoles([UserRole.Admin, UserRole.Coordinator, UserRole.Guest]),
     algorithmController.getTimetableData
 );
 

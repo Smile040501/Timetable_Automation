@@ -1,3 +1,5 @@
+import { RoomAsJSON } from "@ta/shared/utils";
+
 export class Room {
     constructor(
         public roomID: number,
@@ -10,6 +12,16 @@ export class Room {
 
     toString = () =>
         `<${this.name} (${this.campus}, ${this.lectureType}, ${this.capacity})>`;
+
+    static createRoomFromJSON = (roomID: number, room: RoomAsJSON) => {
+        return new Room(
+            roomID,
+            room.name,
+            room.lectureType,
+            room.capacity,
+            room.campus
+        );
+    };
 
     static exportAsJSON = (rooms: Room[]) => {
         return JSON.stringify(rooms, (key, value) => {

@@ -1,7 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 
-import { Departments } from "@ta/shared/utils";
-import { DataUploaded } from "@ta/shared/models";
+import { DataUploaded, Departments } from "@ta/shared/utils";
 
 const dataSchema = new Schema<DataUploaded<Types.ObjectId>>(
     {

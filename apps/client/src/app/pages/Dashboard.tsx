@@ -3,16 +3,24 @@ import intersection from "lodash/intersection";
 
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
+
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 import { AppRoutes, Dashboard as LibDashboard } from "@ta/ui";
 import { AuthUserState } from "@ta/shared/models";
 
 import routes from "../routes";
 import { makeUserInfoSelector } from "../redux/selectors/authUser";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { authLogout } from "../redux/actions";
 
 const Dashboard: React.FC = () => {
+    const dispatch = useAppDispatch();
+
     const userInfoSelector = useMemo(makeUserInfoSelector, []);
     const userInfo = useAppSelector(userInfoSelector);
 
@@ -33,6 +41,10 @@ const Dashboard: React.FC = () => {
                 }),
             };
         });
+    };
+
+    const handleLogout = () => {
+        dispatch(authLogout());
     };
 
     return (
@@ -94,6 +106,18 @@ const Dashboard: React.FC = () => {
                         </Grid>
                     )}
                 </Grid>
+            }
+            extraRoutes={
+                userInfo.email
+                    ? [
+                          <ListItemButton key="logout" onClick={handleLogout}>
+                              <ListItemIcon>
+                                  <LogoutRoundedIcon />{" "}
+                              </ListItemIcon>
+                              <ListItemText primary="Logout" />
+                          </ListItemButton>,
+                      ]
+                    : []
             }
         />
     );

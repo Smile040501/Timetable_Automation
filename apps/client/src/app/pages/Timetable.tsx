@@ -7,8 +7,12 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
-import { Class, Data, Interval, Slot } from "@ta/shared/models";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+
+import { Class, Course, Interval, Room, Slot } from "@ta/shared/models";
 import {
     getEnumKeys,
     generateRandomColor,
@@ -16,6 +20,8 @@ import {
     Filters,
     LectureType,
     WeekDay,
+    DataUploaded,
+    ClassAsReturned,
 } from "@ta/shared/utils";
 import {
     DayTimetable,
@@ -25,10 +31,13 @@ import {
     TimetableFilters,
 } from "@ta/ui";
 
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { makeClassesSelector, makeDataSelector } from "../redux/selectors";
+import { getTimetableData as getTimetableDataFromServer } from "../redux/actions";
 
 const Timetable: React.FC = () => {
+    const dispatch = useAppDispatch();
+
     const [classes, setClasses] = useState<[Class, Interval, Slot][]>([]);
     const [displayedClasses, setDisplayedClasses] = useState<Class[]>([]);
     const [weekDay, setWeekDay] = useState("");
@@ -46,9 +55,34 @@ const Timetable: React.FC = () => {
     const generatedClasses = useAppSelector(generatedClassesSelector);
     const algorithmData = useAppSelector(algorithmDataSelector);
 
+    const getClassesFromUploaded = (classes: ClassAsReturned[]) => {
+        return classes.map(
+            (cls, clsIdx) =>
+                new Class<null>(
+                    clsIdx,
+                    Course.createCourseFromJSON(clsIdx, cls.course),
+                    cls.slots.map((slot, slotIdx) =>
+                        Slot.createSlotFromJSON(slotIdx, slot)
+                    ),
+                    cls.rooms.map((room, roomIdx) =>
+                        Room.createRoomFromJSON(roomIdx, room)
+                    )
+                )
+        );
+    };
+
     useEffect(() => {
-        setDisplayedClasses(generatedClasses);
+        setDisplayedClasses(getClassesFromUploaded(generatedClasses));
+        setClasses([]);
     }, [generatedClasses]);
+
+    useEffect(() => {
+        dispatch(getTimetableDataFromServer());
+    }, [dispatch]);
+
+    const handleRefreshClick = () => {
+        dispatch(getTimetableDataFromServer());
+    };
 
     const handleSwitchChange =
         (key: "compactTimes" | "collapseTimes" | "verticalDays") =>
@@ -153,7 +187,7 @@ const Timetable: React.FC = () => {
         return data;
     };
 
-    const getFilterOptionsValues = (data?: Data): Filters => {
+    const getFilterOptionsValues = (data?: DataUploaded): Filters => {
         if (!data) {
             return {
                 courses: [],
@@ -171,7 +205,7 @@ const Timetable: React.FC = () => {
                 (course) => `${course.code} - ${course.name}`
             ),
             rooms: data.rooms.map((room) => `${room.name}, ${room.campus}`),
-            faculties: data.faculties.map((faculty) => faculty.name),
+            faculties: data.faculties,
             slots: data.slots.map((slot) => slot.name),
             departments: [
                 ...data.departmentsWithConflicts,
@@ -184,7 +218,9 @@ const Timetable: React.FC = () => {
     };
 
     const handleFiltersChange = (key: string, filterOptions: Filters) => {
-        let resultantClasses: Class[] = cloneDeep(generatedClasses);
+        let resultantClasses: Class[] = cloneDeep(
+            getClassesFromUploaded(generatedClasses)
+        );
         for (const key of Object.keys(filterOptions)) {
             const values = filterOptions[key as keyof Filters] as string[];
             if (values.length === 0) continue;
@@ -271,11 +307,24 @@ const Timetable: React.FC = () => {
             }
         }
         setDisplayedClasses(resultantClasses);
+        setClasses([]);
     };
 
     const getCaption = () => (
         <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
-            <Grid container spacing={5}>
+            <Grid container spacing={4} sx={{ alignItems: "center" }}>
+                <Grid item>
+                    <Tooltip title="Refresh Data" arrow>
+                        <IconButton
+                            aria-label="refresh-data"
+                            color="info"
+                            onClick={handleRefreshClick}
+                            size="large"
+                        >
+                            <RefreshRoundedIcon fontSize="inherit" />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
                 <Grid item>
                     <FormControlLabel
                         control={

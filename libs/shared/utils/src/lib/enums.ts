@@ -55,6 +55,14 @@ export enum UserRole {
 }
 
 export enum AlgorithmStatus {
+    UNEXECUTED = "UNEXECUTED",
     PENDING = "PENDING",
     COMPLETED = "COMPLETED",
+    FAILED = "FAILED",
+}
+
+export enum AlgorithmID {
+    EXECUTE_GEN1 = "EXECUTE_GEN1",
+    EXECUTE_GEN2 = "EXECUTE_GEN2",
+    EXECUTE_SA = "EXECUTE_SA",
 }

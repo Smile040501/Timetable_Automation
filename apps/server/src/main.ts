@@ -17,6 +17,9 @@ import courseRoutes from "./routes/course";
 import roomRoutes from "./routes/room";
 import slotRoutes from "./routes/slot";
 import redisClient from "./utils/redisConnect";
+import { serverAdapter } from "./bullmq/bullmq";
+import { setRedisAlgorithmStatus } from "./utils/algorithmStatus";
+import { AlgorithmStatus } from "@ta/shared/utils";
 
 const app = express();
 
@@ -59,6 +62,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/slots", slotRoutes);
+app.use("/bullmq", serverAdapter.getRouter());
 
 // Error handler
 app.use(errorHandler);
@@ -66,8 +70,9 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 
 // Start listening on the server when connected to mongodb
-mongoose.connection.once("open", () => {
+mongoose.connection.once("open", async () => {
     console.log("Connected to MongoDB!");
+    await setRedisAlgorithmStatus(AlgorithmStatus.UNEXECUTED);
     app.listen(port, () => {
         console.log(`Listening at http://localhost:${port}`);
     });

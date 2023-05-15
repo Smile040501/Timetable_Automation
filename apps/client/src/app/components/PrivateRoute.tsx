@@ -1,28 +1,28 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 import intersection from "lodash/intersection";
 
 import { UserRole } from "@ta/shared/utils";
-
-import { makeUserInfoSelector } from "../redux/selectors";
-import { useAppSelector } from "../redux/hooks";
+import { AuthUserState } from "@ta/shared/models";
 
 const PrivateRoute: React.FC<{
     children: JSX.Element;
     allowedUsers: UserRole[];
 }> = ({ children, allowedUsers }) => {
-    const userInfoSelector = useMemo(makeUserInfoSelector, []);
-    const userInfo = useAppSelector(userInfoSelector);
-
-    if (!userInfo.email) {
+    const userInfo = localStorage.getItem("userInfo");
+    if (!userInfo) {
         return <Navigate replace to="/login" />;
     }
 
-    if (intersection(userInfo.roles, allowedUsers).length === 0) {
+    const user = JSON.parse(userInfo) as AuthUserState;
+    if (!user.email) {
+        return <Navigate replace to="/login" />;
+    }
+
+    if (intersection(user.roles, allowedUsers).length === 0) {
         if (
-            userInfo.roles.indexOf(UserRole.Admin) !== -1 ||
-            userInfo.roles.indexOf(UserRole.Coordinator) !== -1
+            user.roles.indexOf(UserRole.Admin) !== -1 ||
+            user.roles.indexOf(UserRole.Coordinator) !== -1
         ) {
             return <Navigate replace to="/" />;
         } else {

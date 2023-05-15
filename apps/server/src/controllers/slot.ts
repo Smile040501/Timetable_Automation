@@ -1,16 +1,33 @@
 import { RequestHandler } from "express";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
-import { FetchSlotsResponse } from "@ta/shared/models";
+import { FetchSlotsResponse, MongooseReturnedObject } from "@ta/shared/models";
 import {
     HttpError,
     httpStatusTypes,
     httpStatusNames,
     SlotAsUploaded,
+    AlgorithmStatus,
 } from "@ta/shared/utils";
 
 import { AuthRequest } from "../utils/interfaces";
 import { SlotModel } from "../models";
+import { getRedisAlgorithmStatus } from "../utils/algorithmStatus";
+
+export const getSlotsByIds = async (slotIds: Types.ObjectId[]) => {
+    const slots: MongooseReturnedObject<SlotAsUploaded>[] = [];
+    for (let i = 0; i < slotIds.length; ++i) {
+        const uploadedSlot = await SlotModel.findById(slotIds[i]);
+        if (!uploadedSlot) {
+            const nf = httpStatusTypes[httpStatusNames.NOT_FOUND];
+            const error = new HttpError(nf.message, nf.status);
+            throw error;
+        }
+        const slot = uploadedSlot.toObject();
+        slots.push(slot);
+    }
+    return slots;
+};
 
 const getSlots: RequestHandler = async (
     req: AuthRequest<object>,
@@ -38,6 +55,14 @@ const uploadSlots: RequestHandler = async (
     res,
     next
 ) => {
+    // Check if algorithm already running
+    const algorithmStatus = await getRedisAlgorithmStatus();
+    if (algorithmStatus && algorithmStatus === AlgorithmStatus.PENDING) {
+        const br = httpStatusTypes[httpStatusNames.BAD_REQUEST];
+        const error = new HttpError(br.message, br.status);
+        return next(error);
+    }
+
     const { slots } = req.body;
 
     try {

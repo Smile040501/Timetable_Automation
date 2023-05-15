@@ -1,16 +1,33 @@
 import { RequestHandler } from "express";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
-import { FetchRoomsResponse } from "@ta/shared/models";
+import { FetchRoomsResponse, MongooseReturnedObject } from "@ta/shared/models";
 import {
     HttpError,
     httpStatusTypes,
     httpStatusNames,
     RoomAsJSON,
+    AlgorithmStatus,
 } from "@ta/shared/utils";
 
 import { AuthRequest } from "../utils/interfaces";
 import { RoomModel } from "../models";
+import { getRedisAlgorithmStatus } from "../utils/algorithmStatus";
+
+export const getRoomsByIds = async (roomIds: Types.ObjectId[]) => {
+    const rooms: MongooseReturnedObject<RoomAsJSON>[] = [];
+    for (let i = 0; i < roomIds.length; ++i) {
+        const uploadedRoom = await RoomModel.findById(roomIds[i]);
+        if (!uploadedRoom) {
+            const nf = httpStatusTypes[httpStatusNames.NOT_FOUND];
+            const error = new HttpError(nf.message, nf.status);
+            throw error;
+        }
+        const room = uploadedRoom.toObject();
+        rooms.push(room);
+    }
+    return rooms;
+};
 
 const getRooms: RequestHandler = async (
     req: AuthRequest<object>,
@@ -38,6 +55,14 @@ const uploadRooms: RequestHandler = async (
     res,
     next
 ) => {
+    // Check if algorithm already running
+    const algorithmStatus = await getRedisAlgorithmStatus();
+    if (algorithmStatus && algorithmStatus === AlgorithmStatus.PENDING) {
+        const br = httpStatusTypes[httpStatusNames.BAD_REQUEST];
+        const error = new HttpError(br.message, br.status);
+        return next(error);
+    }
+
     const { rooms } = req.body;
 
     try {

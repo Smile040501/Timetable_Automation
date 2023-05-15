@@ -1,4 +1,11 @@
-export { updateClasses, updateData } from "./slices/algorithmData";
+export {
+    updateAlgorithmStatus,
+    updateClasses,
+    updateData,
+    getAlgorithmStatus,
+    generateTimetable,
+    getTimetableData,
+} from "./slices/algorithmData";
 
 export { auth, authCheckState, authLogout } from "./slices/authUser";
 

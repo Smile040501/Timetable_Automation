@@ -2,7 +2,9 @@ import { Types } from "mongoose";
 
 import {
     AlgorithmStatus,
+    ClassAsReturned,
     CourseAsJSON,
+    DataUploaded,
     RoomAsJSON,
     SlotAsUploaded,
     UserRole,
@@ -23,30 +25,28 @@ export interface AuthResponse extends MsgResponse {
     tokenExpiration: number;
 }
 
+export type MongooseReturnedObject<T> = T & { _id: Types.ObjectId } & Required<{
+        _id: Types.ObjectId;
+    }>;
+
 export interface CreateUserResponse extends MsgResponse {
-    newUser: User & Required<{ _id: Types.ObjectId }>;
+    newUser: MongooseReturnedObject<User>;
 }
 
 export interface FetchCoursesResponse extends MsgResponse {
-    courses: (CourseAsJSON & { _id: Types.ObjectId } & Required<{
-            _id: Types.ObjectId;
-        }>)[];
+    courses: MongooseReturnedObject<CourseAsJSON>[];
 }
 
 export interface FetchRoomsResponse extends MsgResponse {
-    rooms: (RoomAsJSON & { _id: Types.ObjectId } & Required<{
-            _id: Types.ObjectId;
-        }>)[];
+    rooms: MongooseReturnedObject<RoomAsJSON>[];
 }
 
 export interface FetchSlotsResponse extends MsgResponse {
-    slots: (SlotAsUploaded & { _id: Types.ObjectId } & Required<{
-            _id: Types.ObjectId;
-        }>)[];
+    slots: MongooseReturnedObject<SlotAsUploaded>[];
 }
 
 export interface FetchAlgorithmDataResponse extends MsgResponse {
     algorithmStatus: AlgorithmStatus;
-    classes: string[];
-    data?: string;
+    classes: ClassAsReturned[];
+    data?: DataUploaded;
 }

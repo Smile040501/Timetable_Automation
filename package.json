@@ -59,6 +59,8 @@
         "url-loader": "^4.1.1"
     },
     "dependencies": {
+        "@bull-board/api": "^5.1.2",
+        "@bull-board/express": "^5.1.2",
         "@emotion/react": "^11.10.8",
         "@emotion/styled": "^11.10.8",
         "@fontsource/roboto": "^4.5.8",
@@ -68,6 +70,7 @@
         "@reduxjs/toolkit": "^1.9.5",
         "@swc/helpers": "~0.5.0",
         "axios": "^1.4.0",
+        "bullmq": "^3.13.4",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
@@ -93,7 +96,7 @@
     "scripts": {
         "start": "npm-run-all -p start:client start:server",
         "start:client": "nx serve client",
-        "start:server": "nx serve server",
+        "start:server": "redis-cli FLUSHDB && nx serve server",
         "build": "nx build client && nx build server",
         "lint": "nx lint client && nx lint server",
         "format:check": "nx format:check"

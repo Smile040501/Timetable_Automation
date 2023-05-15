@@ -74,7 +74,8 @@ export const Dashboard: React.FC<{
     routes: AppRoutes;
     header: ReactNode;
     showDrawer: boolean;
-}> = ({ routes, header, showDrawer }) => {
+    extraRoutes?: JSX.Element[];
+}> = ({ routes, header, showDrawer, extraRoutes }) => {
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -122,7 +123,7 @@ export const Dashboard: React.FC<{
                             </IconButton>
                         </Toolbar>
                         <Divider />
-                        <DrawerList routes={routes} />
+                        <DrawerList routes={routes} extraRoutes={extraRoutes} />
                     </Drawer>
                 )}
                 <Box

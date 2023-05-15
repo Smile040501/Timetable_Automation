@@ -7,11 +7,13 @@ import Paper from "@mui/material/Paper";
 interface UploadJSONProps<T> {
     buttonText: string;
     onUpload(data: T[]): void;
+    disabled: boolean;
 }
 
 export const UploadJSON = <T,>({
     buttonText,
     onUpload,
+    disabled,
 }: UploadJSONProps<T>) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -39,7 +41,12 @@ export const UploadJSON = <T,>({
                 textAlign: "center",
             }}
         >
-            <Button variant="contained" component="label" sx={{ width: 150 }}>
+            <Button
+                disabled={disabled}
+                variant="contained"
+                component="label"
+                sx={{ width: 150 }}
+            >
                 {buttonText}
                 <input
                     hidden

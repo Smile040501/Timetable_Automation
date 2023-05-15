@@ -9,5 +9,9 @@ export const environment = {
     windowMins: process.env.NX_WINDOW_MIN,
     testerEmails: process.env.NX_TESTER_EMAILS,
     allowedEmailDomains: process.env.NX_ALLOWED_EMAIL_DOMAINS,
-    algorithmStatus: process.env.NX_REDIS_ALGO_STATUS_KEY,
+    redisAlgorithmStatusKey: process.env.NX_REDIS_ALGO_STATUS_KEY,
+    redisQueueHost: process.env.NX_REDIS_QUEUE_HOST || "localhost",
+    redisQueuePort: process.env.NX_REDIS_QUEUE_PORT
+        ? +process.env.NX_REDIS_QUEUE_PORT
+        : 6379,
 };

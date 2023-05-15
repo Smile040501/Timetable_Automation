@@ -68,6 +68,14 @@ const getDrawerListItems = (routes: AppRoutes) => {
     return routesList;
 };
 
-export const DrawerList: React.FC<{ routes: AppRoutes }> = ({ routes }) => {
-    return <List component="nav">{getDrawerListItems(routes)}</List>;
+export const DrawerList: React.FC<{
+    routes: AppRoutes;
+    extraRoutes?: JSX.Element[];
+}> = ({ routes, extraRoutes }) => {
+    return (
+        <List component="nav">
+            {getDrawerListItems(routes)}
+            {extraRoutes}
+        </List>
+    );
 };

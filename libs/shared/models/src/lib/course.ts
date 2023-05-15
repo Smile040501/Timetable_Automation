@@ -1,3 +1,4 @@
+import { CourseAsJSON } from "@ta/shared/utils";
 import { Faculty } from "./faculty";
 
 export class Course {
@@ -24,6 +25,20 @@ export class Course {
         }) (${this.maxNumberOfStudents}) [${this.faculties
             .map((f) => f.toString())
             .join(", ")}]>`;
+
+    static createCourseFromJSON = (courseID: number, course: CourseAsJSON) => {
+        return new Course(
+            courseID,
+            course.code,
+            course.name,
+            course.credits,
+            course.courseType,
+            course.lectureType,
+            course.maxNumberOfStudents,
+            course.faculties.map((fac, idx) => new Faculty(idx, fac)),
+            course.department
+        );
+    };
 
     static exportAsJSON = (courses: Course[]) => {
         return JSON.stringify(courses, (key, value) => {
