@@ -34,7 +34,7 @@ import {
 const defaultAlgorithmConfig: AlgorithmConfigData = {
     VERBOSE: !env.production,
     RANDOM_DATA: false,
-    UPPER_BOUND: 10000,
+    UPPER_BOUND: 20000,
     MIN_NUM_FACULTY: 2,
     NUM_PME: 0,
     EXPANDED_SLOTS: false,
@@ -139,7 +139,7 @@ const generateTimetable: RequestHandler = async (
 
         const algorithmConfig: AlgorithmConfigData = {
             ...defaultAlgorithmConfig,
-            inputCourses: courses.slice(0, 10),
+            inputCourses: courses,
             inputRooms: rooms,
             inputSlots: slots.map((slot) => convertSlotsUploadedToJSON(slot)),
         };

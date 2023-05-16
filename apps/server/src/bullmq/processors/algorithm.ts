@@ -42,6 +42,9 @@ export default async function algorithmJobProcessor(
             db.disconnect();
         }
 
+        await job.log(
+            `Completed processing job ${job.name} with id ${job.id}!`
+        );
         await job.updateProgress(100);
     } catch (err) {
         console.log(err);

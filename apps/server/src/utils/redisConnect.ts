@@ -4,6 +4,7 @@ import { environment as env } from "../environment";
 export const redisOptions = {
     host: env.redisQueueHost,
     port: env.redisQueuePort,
+    connectTimeout: 20000,
 };
 
 const redisClient = createClient({

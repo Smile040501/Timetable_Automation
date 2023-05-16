@@ -1,0 +1,302 @@
+[
+    {
+        "code": "HS2031",
+        "name": "Principles of Economics",
+        "credits": [3, 0, 0, 3],
+        "courseType": "HSE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Amrita Roy"],
+        "department": "HSE"
+    },
+    {
+        "code": "HS2302",
+        "name": "French A1.1",
+        "credits": [3, 0, 0, 3],
+        "courseType": "HSE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Reenu Punnoose"],
+        "department": "HSE"
+    },
+    {
+        "code": "MA2032",
+        "name": "Numerical Analysis",
+        "credits": [3, 0, 0, 3],
+        "courseType": "MAE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["HVR Mittal"],
+        "department": "MAE"
+    },
+    {
+        "code": "MA2040",
+        "name": "Probability and Statistics",
+        "credits": [3, 0, 0, 3],
+        "courseType": "MAE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Ashok Kumar", "S H Kulkarni"],
+        "department": "MAE"
+    },
+    {
+        "code": "HS4605",
+        "name": "Foundations of Linguistics",
+        "credits": [3, 0, 0, 3],
+        "courseType": "GCE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Reenu Punnoose"],
+        "department": "GCE"
+    },
+    {
+        "code": "HS4606",
+        "name": "Media, Identity and the Self",
+        "credits": [3, 0, 0, 3],
+        "courseType": "GCE",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Sujatha G"],
+        "department": "GCE"
+    },
+    {
+        "code": "CE2020",
+        "name": "Structural Analysis",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Madhu Karthik M"],
+        "department": "CE"
+    },
+    {
+        "code": "CE2040",
+        "name": "Hydraulic Engineering",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Athira P"],
+        "department": "CE"
+    },
+    {
+        "code": "CE2180",
+        "name": "Surveying Practical",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Subhasis Mitra"],
+        "department": "CE"
+    },
+    {
+        "code": "CE3080",
+        "name": "Hydraulic and Environmental Engineering Laboratory",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Praveena G", "Sarmistha Singh"],
+        "department": "CE"
+    },
+    {
+        "code": "CE5510",
+        "name": "Advanced Concrete Technology",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Sunitha K Nayar"],
+        "department": "CE"
+    },
+    {
+        "code": "CE5011",
+        "name": "Finite Element Applications",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Gokulnath C"],
+        "department": "CE"
+    },
+    {
+        "code": "CS2020",
+        "name": "Discrete Mathematics for Computer Science",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Jasine Babu"],
+        "department": "CSE"
+    },
+    {
+        "code": "CS2080",
+        "name": "Artificial Intelligence",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Narayanan C K"],
+        "department": "CSE"
+    },
+    {
+        "code": "CS2180",
+        "name": "Artificial Intelligence Laboratory",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Krithika Ramaswamy", "Dinesh K"],
+        "department": "CSE"
+    },
+    {
+        "code": "CS3120",
+        "name": "Database management system Laboratory",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Koninika Pal", "Sahely Bhadra"],
+        "department": "CSE"
+    },
+    {
+        "code": "CS5016",
+        "name": "Computational Methods and Applications",
+        "credits": [2, 0, 3, 4],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Albert Sunny"],
+        "department": "CSE"
+    },
+    {
+        "code": "CS5XXX",
+        "name": "Computational Algebra and Number Theory",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Piyush P. Kurur"],
+        "department": "CSE"
+    },
+    {
+        "code": "EE2020",
+        "name": "Electrical Machines",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Arun Rahul S"],
+        "department": "EE"
+    },
+    {
+        "code": "EE2040",
+        "name": "Analog Circuits Theory",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Arvind Ajoy"],
+        "department": "EE"
+    },
+    {
+        "code": "EE2160",
+        "name": "CAD Lab",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Swaroop Sahoo", "Jobin Francis"],
+        "department": "EE"
+    },
+    {
+        "code": "EE3120",
+        "name": "Communication Systems and Microwave Laboratory",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Nikhil Krishnan M", "Swaroop Sahoo"],
+        "department": "EE"
+    },
+    {
+        "code": "EE5518",
+        "name": "Nanoelectronic Devices",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Revathy Padmanabhan"],
+        "department": "EE"
+    },
+    {
+        "code": "EE5525",
+        "name": "Sensors and Signal Conditioning Circuits",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Sreenath Vijayakumar"],
+        "department": "EE"
+    },
+    {
+        "code": "ME2020",
+        "name": "Gas Dynamics",
+        "credits": [2, 1, 0, 3],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Ganesh Natarajan"],
+        "department": "ME"
+    },
+    {
+        "code": "ME2040",
+        "name": "Machine Drawing Practice",
+        "credits": [1, 0, 3, 4],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Pramod Kuntikana", "Krishna Seshagiri"],
+        "department": "ME"
+    },
+    {
+        "code": "ME2060",
+        "name": "Kinematics and Dynamics of Machinery",
+        "credits": [3, 1, 0, 4],
+        "courseType": "PMT",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Santhakumar Mohan"],
+        "department": "ME"
+    },
+    {
+        "code": "ME2140",
+        "name": "Applied Mechanics Laboratory",
+        "credits": [0, 0, 3, 2],
+        "courseType": "PMP",
+        "lectureType": "Lab",
+        "maxNumberOfStudents": 100,
+        "faculties": ["Krishna Seshagiri"],
+        "department": "ME"
+    },
+    {
+        "code": "ME5617",
+        "name": "Wheeled Mobile Robots",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["Santhakumar Mohan"],
+        "department": "ME"
+    },
+    {
+        "code": "ME4502",
+        "name": "Aerospace Propulsion",
+        "credits": [3, 0, 0, 3],
+        "courseType": "PME",
+        "lectureType": "Normal",
+        "maxNumberOfStudents": 60,
+        "faculties": ["T Sundararajan"],
+        "department": "ME"
+    }
+]

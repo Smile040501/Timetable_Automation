@@ -158,17 +158,6 @@ export const authLogout = (): AppThunk => (dispatch, getState) => {
     localStorage.removeItem("expirationDate");
     localStorage.removeItem("userInfo");
     dispatch(resetState());
-    dispatch(
-        updateUI({
-            error: null,
-            loading: false,
-            snackbar: {
-                open: true,
-                msg: "Successfully Logged Out!",
-                severity: "success",
-            },
-        })
-    );
     router.navigate("/login");
 };
 

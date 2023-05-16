@@ -16,7 +16,7 @@ import { AuthUserState } from "@ta/shared/models";
 import routes from "../routes";
 import { makeUserInfoSelector } from "../redux/selectors/authUser";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { authLogout } from "../redux/actions";
+import { authLogout, updateUI } from "../redux/actions";
 
 const Dashboard: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -45,6 +45,17 @@ const Dashboard: React.FC = () => {
 
     const handleLogout = () => {
         dispatch(authLogout());
+        dispatch(
+            updateUI({
+                error: null,
+                loading: false,
+                snackbar: {
+                    open: true,
+                    msg: "Successfully Logged Out!",
+                    severity: "success",
+                },
+            })
+        );
     };
 
     return (
